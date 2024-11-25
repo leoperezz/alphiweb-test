@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from 'react';
 import { IoChevronForward, IoDocument, IoClose, IoSearch } from 'react-icons/io5';
 import { SlDocs } from "react-icons/sl";

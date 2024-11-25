@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { IoNotificationsOutline } from 'react-icons/io5';
 import { useAuth } from '../../context/AuthContext';
 import { getUserNotifications } from '../../config/firestore';
+import Image from 'next/image';
 
 interface Notification {
   date: string;
@@ -76,13 +77,16 @@ export default function Header() {
       <div className="relative">
         <button 
           onClick={() => setShowEmail(!showEmail)}
-          className="w-10 h-10 rounded overflow-hidden"
+          className="w-10 h-10 rounded overflow-hidden relative"
         >
           {photoURL ? (
-            <img 
+            <Image 
               src={photoURL} 
               alt="Profile" 
-              className="w-full h-full object-cover"
+              fill
+              sizes="40px"
+              className="object-cover"
+              priority
             />
           ) : (
             <div className="w-full h-full bg-gray-600 flex items-center justify-center text-white">
