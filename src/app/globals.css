@@ -1,0 +1,692 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Geist&display=swap');
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: 0, 0, 0;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  font-family: 'Geist', sans-serif;
+}
+
+.font-geist {
+  font-family: 'Geist', sans-serif;
+}
+
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Efectos de navegación */
+.nav-link {
+  @apply text-white/70 transition-all duration-200 ease-in-out hover:text-white hover:scale-105;
+}
+
+.nav-button {
+  @apply bg-white text-black px-4 py-2 rounded-md font-geist transition-all duration-200 ease-in-out hover:bg-white/90 hover:scale-105;
+}
+
+.login-with-google-btn {
+  @apply flex items-center justify-center gap-2 bg-black text-white px-6 py-3 
+  font-geist transition-all duration-300 relative overflow-hidden border border-white/20;
+}
+
+.login-with-google-btn .white-icon {
+  filter: brightness(0) invert(1);
+  transition: all 0.3s ease;
+}
+
+.login-with-google-btn:hover .white-icon {
+  background: linear-gradient(45deg, #40E0D0, #FF8C00, #FF0080);
+  background-size: 200% 200%;
+  animation: gradient 3s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: none;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+}
+
+/* Para el efecto de gradiente activo */
+.gradient-active {
+  background: linear-gradient(45deg, #40E0D0, #FF8C00, #FF0080);
+  background-size: 200% 200%;
+  animation: gradient 3s ease infinite;
+}
+
+.typewriter-text {
+  position: relative;
+  width: fit-content;
+  opacity: 0;
+  animation: showText 0.1s forwards,
+             typing 15s infinite;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-left: 12px;
+  font-size: 1.5rem;
+}
+
+@keyframes typing {
+  0%, 40% {
+    width: 0;
+    opacity: 0;
+  }
+  45%, 90% {
+    width: 5.3ch;
+    opacity: 1;
+  }
+  95%, 100% {
+    width: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes showText {
+  to {
+    opacity: 1;
+  }
+}
+
+.typewriter-text::after {
+  content: "";
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 80%;
+  width: 2px;
+  background: white;
+  animation: cursor 15s infinite;
+}
+
+@keyframes cursor {
+  0%, 40% {
+    opacity: 0;
+  }
+  45%, 90% {
+    opacity: 1;
+  }
+  95%, 100% {
+    opacity: 0;
+  }
+}
+
+.logo-circle {
+  animation: centerCircle 15s infinite;
+  transition: transform 0.5s ease;
+  position: relative;
+  z-index: 10;
+}
+
+@keyframes centerCircle {
+  0%, 40% {
+    transform: translateX(15px);
+  }
+  45%, 90% {
+    transform: translateX(10px);
+  }
+  95%, 100% {
+    transform: translateX(15px);
+  }
+}
+
+/* Nuevo estilo para los inputs */
+.form-input {
+  @apply w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 
+  transition-all duration-300 hover:border-white/30 focus:border-white/30 
+  focus:outline-none focus:ring-0 placeholder-gray-500;
+}
+
+.form-input:focus {
+  @apply border-white/30;
+}
+
+/* Estilos para el scrollbar del modal */
+.modal-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.modal-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.modal-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Estilos específicos para el sidebar */
+.sidebar-link {
+  @apply flex items-center gap-3 px-6 py-2.5 text-white/70 hover:text-white hover:bg-white/5 text-sm transition-colors;
+}
+
+.sidebar-icon {
+  @apply text-lg;
+}
+
+/* Estilo para el botón de logout */
+.logout-button {
+  @apply w-full flex items-center justify-center gap-2 p-2 text-red-500 hover:text-red-600 transition-colors;
+}
+
+/* Animación de los puntos de carga */
+.loading-dots::after {
+  content: '';
+  animation: dots 1.5s steps(5, end) infinite;
+}
+
+@keyframes dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
+
+/* Estilo para el modal de carga */
+.loading-modal {
+  @apply fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50;
+}
+
+.loading-content {
+  @apply bg-[#1a1a1a] rounded-lg p-8 max-w-md w-full mx-4 text-center border border-white/10;
+}
+
+.loading-title {
+  @apply text-xl font-medium mb-2 flex items-center justify-center gap-2;
+}
+
+.loading-message {
+  @apply text-gray-400 mb-6;
+}
+
+.view-status-button {
+  @apply px-6 py-2 rounded-lg bg-white text-black hover:bg-white/90 
+  transition-all duration-300 text-sm font-medium inline-flex items-center gap-2;
+}
+
+/* Estilos para los estados de los agentes */
+.status-active {
+  @apply text-emerald-400;
+}
+
+.status-building {
+  @apply text-blue-400;
+}
+
+.status-inactive {
+  @apply text-red-400;
+}
+
+.progress-active {
+  @apply bg-emerald-400/20;
+}
+
+.progress-building {
+  @apply bg-blue-400/20;
+}
+
+.progress-inactive {
+  @apply bg-red-400/20;
+}
+
+/* Estilos para las barras de progreso */
+.progress-bar {
+  @apply h-1.5 rounded-full transition-all duration-300;
+}
+
+.progress-bar-background {
+  @apply bg-white/5 rounded-full;
+}
+
+/* Chat specific styles */
+.message-container {
+  @apply p-4 rounded-lg max-w-[80%] w-fit font-geist;
+}
+
+.user-message {
+  @apply bg-zinc-800 text-white;
+}
+
+.ai-message {
+  @apply gradient-active text-white;
+}
+
+.gradient-circle {
+  background: linear-gradient(45deg, #40E0D0, #FF8C00, #FF0080);
+  background-size: 200% 200%;
+  animation: gradient 3s ease infinite;
+}
+
+/* Chat styles */
+.chat-container {
+  @apply flex flex-col h-screen;
+}
+
+.messages-container {
+  @apply flex-1 overflow-y-auto p-6 space-y-6;
+}
+
+.message-bubble {
+  @apply rounded-lg p-4 max-w-[80%];
+}
+
+.user-message {
+  @apply bg-zinc-800 text-white ml-auto;
+}
+
+.ai-message {
+  @apply bg-gradient-to-r from-[#40e0d0] via-[#ff8c00] to-[#ff0080] text-white;
+}
+
+.document-card {
+  @apply bg-zinc-900/50 rounded-lg p-4 border border-white/10 
+         hover:border-orange-500/30 transition-all duration-200 cursor-pointer;
+}
+
+.document-card:hover {
+  @apply bg-zinc-900/70 transform scale-[1.02];
+}
+
+.document-badge {
+  @apply inline-flex items-center px-2 py-1 rounded-md text-xs
+         bg-zinc-800/80 text-white/70 transition-colors;
+}
+
+.document-card:hover .document-badge {
+  @apply bg-zinc-800/90 text-white/80;
+}
+
+.gradient-circle {
+  background: linear-gradient(45deg, #40E0D0, #FF8C00, #FF0080);
+  background-size: 200% 200%;
+  animation: gradient 3s ease infinite;
+}
+
+/* Chat message animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Ajusta los estilos existentes del chat */
+.user-message {
+  @apply bg-zinc-800 text-white ml-auto;
+}
+
+.ai-message {
+  @apply text-white;
+}
+
+/* Markdown Styles */
+.markdown-content {
+  @apply text-white font-geist;
+}
+
+.markdown-content > *:first-child {
+  @apply mt-0;
+}
+
+.markdown-content > *:last-child {
+  @apply mb-0;
+}
+
+.markdown-content pre {
+  @apply bg-zinc-800/50 rounded-lg p-4 my-4 overflow-x-auto;
+}
+
+.markdown-content code {
+  @apply bg-zinc-800/50 px-1.5 py-0.5 rounded text-sm font-mono text-white;
+}
+
+.markdown-content pre code {
+  @apply bg-transparent p-0 text-white;
+}
+
+.markdown-content ol {
+  @apply list-decimal pl-6 space-y-2;
+  counter-reset: list-item;
+}
+
+.markdown-content ul {
+  @apply list-disc pl-6 space-y-2;
+}
+
+.markdown-content li {
+  @apply text-white/90;
+  display: list-item;
+  padding-left: 0.5rem;
+}
+
+.markdown-content li > * {
+  @apply inline-block align-top;
+}
+
+.markdown-content strong {
+  @apply text-white font-semibold;
+}
+
+.markdown-content blockquote {
+  @apply border-l-4 border-white/20 pl-4 py-1 my-4 italic text-white/80;
+}
+
+.markdown-content a {
+  @apply text-white underline hover:text-white/80 transition-colors;
+}
+
+.markdown-content table {
+  @apply w-full my-4 border-collapse;
+}
+
+.markdown-content th,
+.markdown-content td {
+  @apply border border-zinc-700 px-4 py-2 text-sm;
+}
+
+.markdown-content th {
+  @apply bg-zinc-800;
+}
+
+.markdown-content tr:nth-child(even) {
+  @apply bg-zinc-800/30;
+}
+
+/* Sidebar styles */
+.sidebar-document {
+  @apply bg-zinc-800/50 rounded-lg p-4 border border-white/10 
+         hover:border-white/30 transition-all duration-200;
+}
+
+.sidebar-document:hover {
+  @apply transform scale-[1.02];
+}
+
+.sidebar-score {
+  @apply inline-flex items-center gap-1 text-sm px-2 py-0.5 rounded-full 
+         bg-white/10 text-white/70;
+}
+
+.sidebar-pages {
+  @apply inline-flex items-center gap-1 text-sm px-2 py-0.5 rounded-full 
+         bg-white/10 text-white/70;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Añade una transición suave al contenido principal */
+.main-content {
+  @apply transition-all duration-300 ease-out;
+}
+
+/* Efecto de desenfoque para el fondo del sidebar */
+.sidebar-backdrop {
+  @apply backdrop-blur-md bg-zinc-900/95;
+}
+
+/* Añadir al final del archivo */
+.tool-message {
+  animation: pulsate 1.5s ease-in-out infinite;
+  background: linear-gradient(45deg, #40E0D0, #FF8C00, #FF0080);
+  background-size: 200% 200%;
+  animation: 
+    pulsate 1.5s ease-in-out infinite,
+    gradientMove 3s ease infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 500;
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes pulsate {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.tool-message-content {
+  @apply bg-zinc-800/50 rounded-lg p-4 border border-white/10;
+  background: linear-gradient(45deg, rgba(64, 224, 208, 0.1), rgba(255, 140, 0, 0.1), rgba(255, 0, 128, 0.1));
+  background-size: 200% 200%;
+  animation: gradientMove 3s ease infinite;
+}
+
+.document-badge {
+  @apply inline-flex items-center gap-1 text-sm px-2 py-0.5 rounded-full 
+         bg-white/10 text-white/70;
+}
+
+.document-card {
+  @apply bg-zinc-800/50 rounded-lg p-4 border border-white/10 
+         hover:border-white/20 transition-all duration-200;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.tool-message-content {
+  @apply bg-zinc-800/50 rounded-lg p-4 border border-white/10;
+}
+
+.high-score {
+  @apply bg-emerald-500/20 text-emerald-400 border border-emerald-500/30;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+  animation: glowGreen 2s ease-in-out infinite;
+}
+
+.medium-score {
+  @apply bg-yellow-500/20 text-yellow-400 border border-yellow-500/30;
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.2);
+  animation: glowYellow 2s ease-in-out infinite;
+}
+
+@keyframes glowGreen {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+  }
+}
+
+@keyframes glowYellow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(234, 179, 8, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(234, 179, 8, 0.4);
+  }
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+}
+
+.document-card {
+  @apply bg-zinc-800/50 rounded-lg p-4 border border-white/10 
+         hover:border-white/20 transition-all duration-200;
+  transition: all 0.2s ease-in-out;
+}
+
+.document-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Animación para el modal */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-animation {
+  animation: modalFadeIn 0.2s ease-out forwards;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+}
+
+/* Asegurar que el contenido scrolleable no afecte al layout */
+.custom-scrollbar > div {
+  min-height: 0;
+}
+
+/* Add these styles if not already present */
+.deleting-modal {
+  animation: modalFadeIn 0.2s ease-out forwards;
+}
+
+/* Update or add the loading dots animation */
+.loading-dots::after {
+  content: '';
+  animation: dots 1.5s steps(5, end) infinite;
+}
+
+@keyframes dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
+
+/* Add a subtle shake animation for the delete button hover */
+@keyframes subtle-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-1px); }
+  75% { transform: translateX(1px); }
+}
+
+button:has(.IoTrash):hover {
+  animation: subtle-shake 0.3s ease-in-out;
+}
