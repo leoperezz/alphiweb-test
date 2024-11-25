@@ -20,6 +20,13 @@ interface Document {
   score: number;
 }
 
+interface DocumentResponse {
+  name_doc: string;
+  pages: number | number[];
+  text: string;
+  score: number;
+}
+
 interface ChatContextType {
   messages: Message[];
   documents: Document[];
@@ -111,7 +118,7 @@ export function ChatProvider({ children, projectId }: { children: React.ReactNod
               break;
 
             case 'documents':
-              const formattedDocs = data.content.map((doc: any) => ({
+              const formattedDocs = data.content.map((doc: DocumentResponse) => ({
                 name_doc: doc.name_doc,
                 pages: Array.isArray(doc.pages) ? doc.pages : [doc.pages],
                 text: doc.text,
@@ -149,7 +156,7 @@ export function ChatProvider({ children, projectId }: { children: React.ReactNod
         socketRef.current.close();
       }
     };
-  }, [user, projectId]);
+  }, [user, projectId, connectWebSocket]);
 
   const sendMessage = (text: string) => {
     if (!text.trim()) return;

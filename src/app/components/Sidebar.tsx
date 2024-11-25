@@ -2,7 +2,7 @@
 'use client'
 import Link from 'next/link';
 import { useState } from 'react';
-import { FiUsers, FiUserPlus, FiGrid, FiSettings } from 'react-icons/fi';
+import { FiUsers, FiGrid, FiSettings } from 'react-icons/fi';
 import { IoChevronUpOutline, IoChevronDownOutline, IoPersonCircleOutline, IoLogOutOutline } from 'react-icons/io5';
 import { useAuth } from '../context/AuthContext';
 
@@ -33,11 +33,6 @@ export default function Sidebar() {
         <Link href="/overview" className="flex items-center gap-3 px-6 py-2.5 text-white/70 hover:text-white hover:bg-white/5">
           <FiUsers className="text-lg" />
           <span>Agents</span>
-        </Link>
-        
-        <Link href="/overview/teams" className="flex items-center gap-3 px-6 py-2.5 text-white/70 hover:text-white hover:bg-white/5">
-          <FiUserPlus className="text-lg" />
-          <span>Teams</span>
         </Link>
         
         <Link href="/overview/dashboard" className="flex items-center gap-3 px-6 py-2.5 text-white/70 hover:text-white hover:bg-white/5">
