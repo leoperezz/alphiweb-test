@@ -62,8 +62,12 @@ export function ChatProvider({ children, projectId }: { children: React.ReactNod
             userId: user.uid,
             projectId: projectId
           };
-          socketRef.current.send(JSON.stringify(credentials));
-          setConnectionStatus('connected');
+          setTimeout(() => {
+            if (socketRef.current?.readyState === WebSocket.OPEN) {
+              socketRef.current.send(JSON.stringify(credentials));
+              setConnectionStatus('connected');
+            }
+          }, 100);
         }
       };
 
@@ -132,16 +136,26 @@ export function ChatProvider({ children, projectId }: { children: React.ReactNod
         }
       };
 
+      let reconnectTimeout: NodeJS.Timeout;
+      
       socketRef.current.onclose = () => {
         setConnectionStatus('disconnected');
+        reconnectTimeout = setTimeout(() => {
+          if (user && projectId) {
+            connectWebSocket();
+          }
+        }, 3000);
       };
 
       socketRef.current.onerror = () => {
         setConnectionStatus('disconnected');
       };
 
+      return () => {
+        clearTimeout(reconnectTimeout);
+      };
     } catch (error) {
-      console.warn('Error al establecer conexión WebSocket');
+      console.warn('Error al establecer conexión WebSocket:', error);
       setConnectionStatus('disconnected');
     }
   };
