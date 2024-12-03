@@ -20,12 +20,18 @@ interface Message {
 function ChatContent() {
   const [inputMessage, setInputMessage] = useState('');
   const [projectName, setProjectName] = useState('');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const searchParams = useSearchParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const projectId = searchParams.get('projectId');
   
-  const { messages, documents, sendMessage, connectionStatus } = useChat();
+  const { 
+    messages, 
+    documents, 
+    sendMessage, 
+    isLoading,
+    isSidebarOpen,
+    setIsSidebarOpen 
+  } = useChat();
 
   useEffect(() => {
     const fetchProjectDetails = async () => {
@@ -44,30 +50,28 @@ function ChatContent() {
     fetchProjectDetails();
   }, [projectId]);
 
+  useEffect(() => {
+    console.log('Documents en ChatContent:', documents);
+    console.log('Estado del sidebar:', isSidebarOpen);
+  }, [documents, isSidebarOpen]);
+
   const handleSendMessage = () => {
     if (!inputMessage.trim()) return;
     sendMessage(inputMessage);
     setInputMessage('');
   };
 
+  console.log('Rendering SidebarChat with:', { documents, isSidebarOpen });
+
   return (
     <div className="flex h-screen bg-black text-white font-geist">
-      {/* Mostrar estado de conexión */}
-      {connectionStatus !== 'connected' && (
-        <div className="fixed top-4 right-4 z-50">
-          <div className={`px-4 py-2 rounded-lg text-sm ${
-            connectionStatus === 'connecting' ? 'bg-yellow-600' : 'bg-red-600'
-          }`}>
-            {connectionStatus === 'connecting' ? 'Conectando...' : 'Desconectado'}
-          </div>
-        </div>
-      )}
-
-      {/* Sidebar */}
       <SidebarChat 
         documents={documents}
         isOpen={isSidebarOpen}
-        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+        onToggle={() => {
+          console.log('Toggle sidebar called, current state:', isSidebarOpen);
+          setIsSidebarOpen(!isSidebarOpen);
+        }}
       />
 
       {/* Main Chat Area */}
@@ -143,6 +147,15 @@ function ChatContent() {
           </div>
         </div>
       </div>
+
+      {/* You might want to add a loading indicator when messages are being sent */}
+      {isLoading && (
+        <div className="fixed bottom-24 left-1/2 transform -translate-x-1/2">
+          <div className="bg-zinc-800 px-4 py-2 rounded-lg text-sm">
+            AI is typing...
+          </div>
+        </div>
+      )}
     </div>
   );
 }

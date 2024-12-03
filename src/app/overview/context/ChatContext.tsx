@@ -30,9 +30,10 @@ interface DocumentResponse {
 interface ChatContextType {
   messages: Message[];
   documents: Document[];
-  isConnected: boolean;
+  isLoading: boolean;
   sendMessage: (message: string) => void;
-  connectionStatus: 'connecting' | 'connected' | 'disconnected';
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (open: boolean) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -40,140 +41,12 @@ const ChatContext = createContext<ChatContextType | undefined>(undefined);
 export function ChatProvider({ children, projectId }: { children: React.ReactNode, projectId: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
-  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { user } = useAuth();
-  const socketRef = useRef<WebSocket | null>(null);
 
-  const isConnected = connectionStatus === 'connected';
-
-  const connectWebSocket = () => {
-    if (socketRef.current?.readyState === WebSocket.OPEN) {
-      return;
-    }
-
-    try {
-      const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/ws';
-      socketRef.current = new WebSocket(wsUrl);
-      setConnectionStatus('connecting');
-
-      socketRef.current.onopen = () => {
-        if (socketRef.current && user) {
-          const credentials = {
-            userId: user.uid,
-            projectId: projectId
-          };
-          setTimeout(() => {
-            if (socketRef.current?.readyState === WebSocket.OPEN) {
-              socketRef.current.send(JSON.stringify(credentials));
-              setConnectionStatus('connected');
-            }
-          }, 100);
-        }
-      };
-
-      socketRef.current.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          
-          switch (data.type) {
-            case 'tool':
-              setMessages(prev => [
-                ...prev.filter(msg => !msg.isToolMessage),
-                {
-                  id: Date.now().toString(),
-                  content: data.content,
-                  sender: 'assistant',
-                  timestamp: Date.now(),
-                  loading: true,
-                  isToolMessage: true
-                }
-              ]);
-              break;
-
-            case 'chunk':
-              if (data.content && data.content !== '') {
-                setMessages(prev => {
-                  const filteredMessages = prev.filter(msg => !msg.isToolMessage);
-                  const lastMessage = filteredMessages[filteredMessages.length - 1];
-                  
-                  if (lastMessage?.sender === 'assistant' && !lastMessage.isToolMessage) {
-                    return [
-                      ...filteredMessages.slice(0, -1),
-                      {
-                        ...lastMessage,
-                        content: lastMessage.content + data.content,
-                        loading: false
-                      }
-                    ];
-                  } else {
-                    return [
-                      ...filteredMessages,
-                      {
-                        id: Date.now().toString(),
-                        content: data.content,
-                        sender: 'assistant',
-                        timestamp: Date.now(),
-                        loading: false
-                      }
-                    ];
-                  }
-                });
-              }
-              break;
-
-            case 'documents':
-              const formattedDocs = data.content.map((doc: DocumentResponse) => ({
-                name_doc: doc.name_doc,
-                pages: Array.isArray(doc.pages) ? doc.pages : [doc.pages],
-                text: doc.text,
-                score: doc.score
-              }));
-              setDocuments(formattedDocs);
-              break;
-          }
-        } catch (error) {
-          console.warn('Error al procesar mensaje:', error);
-        }
-      };
-
-      let reconnectTimeout: NodeJS.Timeout;
-      
-      socketRef.current.onclose = () => {
-        setConnectionStatus('disconnected');
-        reconnectTimeout = setTimeout(() => {
-          if (user && projectId) {
-            connectWebSocket();
-          }
-        }, 3000);
-      };
-
-      socketRef.current.onerror = () => {
-        setConnectionStatus('disconnected');
-      };
-
-      return () => {
-        clearTimeout(reconnectTimeout);
-      };
-    } catch (error) {
-      console.warn('Error al establecer conexión WebSocket:', error);
-      setConnectionStatus('disconnected');
-    }
-  };
-
-  useEffect(() => {
-    if (user && projectId) {
-      connectWebSocket();
-    }
-
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.close();
-      }
-    };
-  }, [user, projectId, connectWebSocket]);
-
-  const sendMessage = (text: string) => {
-    if (!text.trim()) return;
+  const sendMessage = async (text: string) => {
+    if (!text.trim() || !user) return;
 
     const newMessage: Message = {
       id: Date.now().toString(),
@@ -182,9 +55,103 @@ export function ChatProvider({ children, projectId }: { children: React.ReactNod
       timestamp: Date.now()
     };
     setMessages(prev => [...prev, newMessage]);
+    setIsLoading(true);
 
-    if (socketRef.current?.readyState === WebSocket.OPEN) {
-      socketRef.current.send(JSON.stringify({ message: text }));
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/v1/chat/completions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [{ role: 'user', content: text }],
+          stream: true,
+          userId: user.uid,
+          projectId: projectId
+        })
+      });
+
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error('No reader available');
+
+      let currentAssistantMessage = '';
+      
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const lines = new TextDecoder().decode(value).split('\n');
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          console.log('Linea recibida:', line);
+          try {
+            const data = JSON.parse(line);
+            
+            switch (data.type) {
+              case 'token':
+                currentAssistantMessage += data.content;
+                setMessages(prev => {
+                  const filtered = prev.filter(msg => !msg.isToolMessage);
+                  const last = filtered[filtered.length - 1];
+                  
+                  if (last?.sender === 'assistant') {
+                    return [
+                      ...filtered.slice(0, -1),
+                      { ...last, content: currentAssistantMessage }
+                    ];
+                  } else {
+                    return [...filtered, {
+                      id: Date.now().toString(),
+                      content: currentAssistantMessage,
+                      sender: 'assistant',
+                      timestamp: Date.now()
+                    }];
+                  }
+                });
+                break;
+
+              case 'tool':
+                setMessages(prev => [
+                  ...prev.filter(msg => !msg.isToolMessage),
+                  {
+                    id: Date.now().toString(),
+                    content: data.content,
+                    sender: 'assistant',
+                    timestamp: Date.now(),
+                    isToolMessage: true
+                  }
+                ]);
+                break;
+
+              case 'documents':
+                if (Array.isArray(data.content)) {
+                  console.log('Documentos recibidos del stream:', data.content);
+                  const docs = data.content.map((doc: DocumentResponse) => {
+                    console.log('Procesando documento:', doc);
+                    return {
+                      name_doc: doc.name_doc,
+                      pages: Array.isArray(doc.pages) ? doc.pages : [doc.pages],
+                      text: doc.text,
+                      score: doc.score
+                    };
+                  });
+                  //console.log('Documentos procesados:', docs);
+                  setDocuments(docs);
+                  setIsSidebarOpen(true);
+                  //console.log('Estado después de actualizar documentos:', {
+                  //  documentsLength: docs.length,
+                  //  isSidebarOpen
+                  //});
+                }
+                break;
+            }
+          } catch (e) {
+            console.warn('Error parsing stream:', e);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -192,9 +159,10 @@ export function ChatProvider({ children, projectId }: { children: React.ReactNod
     <ChatContext.Provider value={{
       messages,
       documents,
-      isConnected,
+      isLoading,
       sendMessage,
-      connectionStatus
+      isSidebarOpen,
+      setIsSidebarOpen
     }}>
       {children}
     </ChatContext.Provider>

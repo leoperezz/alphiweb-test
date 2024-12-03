@@ -17,11 +17,20 @@ interface SidebarChatProps {
 }
 
 export default function SidebarChat({ documents, isOpen, onToggle }: SidebarChatProps) {
+  console.log('SidebarChat rendered with:', { 
+    documentsCount: documents.length, 
+    isOpen,
+    documentsSample: documents.slice(0, 2) 
+  });
+
   const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
 
   const handleDocumentClick = (doc: Document) => {
     setSelectedDoc(doc);
   };
+
+  //console.log('Rendering sidebar content, isOpen:', isOpen);
+  //console.log('Rendering documents list:', documents);
 
   return (
     <>
@@ -119,35 +128,41 @@ export default function SidebarChat({ documents, isOpen, onToggle }: SidebarChat
         {/* Documents List */}
         <div className="px-4 pb-4 overflow-y-auto h-[calc(100vh-8rem)]">
           <div className="space-y-3">
-            {documents.map((doc, index) => (
-              <div 
-                key={index} 
-                className="document-card group cursor-pointer hover:shadow-lg"
-                onClick={() => handleDocumentClick(doc)}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="flex-1">
-                    <h3 className="font-medium mb-2 group-hover:text-white transition-colors">
-                      {doc.name_doc}
-                    </h3>
-                    <div className="flex flex-wrap gap-2 mb-2">
-                      <span className={`document-badge ${
-                        doc.score > 0.8 ? 'high-score' : 'medium-score'
-                      }`}>
-                        Score: {doc.score.toFixed(2)}
-                      </span>
-                      <span className="document-badge">
-                        Págs: {Array.isArray(doc.pages) ? doc.pages.join(', ') : doc.pages}
-                      </span>
+            {documents.length === 0 ? (
+              <div className="text-white/50 text-center py-4">
+                No hay documentos relacionados
+              </div>
+            ) : (
+              documents.map((doc, index) => (
+                <div 
+                  key={index} 
+                  className="document-card group cursor-pointer hover:shadow-lg"
+                  onClick={() => handleDocumentClick(doc)}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="flex-1">
+                      <h3 className="font-medium mb-2 group-hover:text-white transition-colors">
+                        {doc.name_doc}
+                      </h3>
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        <span className={`document-badge ${
+                          doc.score > 0.8 ? 'high-score' : 'medium-score'
+                        }`}>
+                          Score: {doc.score.toFixed(2)}
+                        </span>
+                        <span className="document-badge">
+                          Págs: {doc.pages.join(', ')}
+                        </span>
+                      </div>
+                      <p className="text-sm text-white/70 line-clamp-3 group-hover:text-white/90 
+                                transition-colors">
+                        {doc.text}
+                      </p>
                     </div>
-                    <p className="text-sm text-white/70 line-clamp-3 group-hover:text-white/90 
-                              transition-colors">
-                      {doc.text}
-                    </p>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>
