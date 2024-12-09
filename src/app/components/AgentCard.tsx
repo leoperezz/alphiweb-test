@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
+import FileRenderer from '../overview/components/FileRenderer';
 
 interface AgentCardProps {
   name: string;
@@ -9,10 +10,11 @@ interface AgentCardProps {
   status: 'active' | 'building' | 'inactive';
   message: string;
   progress: number;
+  files?: { name: string; size?: number }[];
   onClick: () => void;
 }
 
-export default function AgentCard({ name, projectId, created, status, message, progress, onClick }: AgentCardProps) {
+export default function AgentCard({ name, projectId, created, status, message, progress, files = [], onClick }: AgentCardProps) {
   const getStatusStyles = (status: string) => {
     switch (status) {
       case 'active':
@@ -74,6 +76,25 @@ export default function AgentCard({ name, projectId, created, status, message, p
         <div className="mt-4">
           <p className="text-white/70 text-sm">{message}</p>
         </div>
+
+        {files.length > 0 && (
+          <div className="mt-4 space-y-2">
+            <p className="text-white/70 text-sm mb-2">Files:</p>
+            {files.slice(0, 3).map((file, index) => (
+              <FileRenderer 
+                key={index}
+                fileName={file.name}
+                size={file.size}
+                showSize={true}
+              />
+            ))}
+            {files.length > 3 && (
+              <p className="text-xs text-white/50">
+                +{files.length - 3} more files
+              </p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

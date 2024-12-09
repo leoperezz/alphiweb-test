@@ -743,3 +743,51 @@ button:has(.IoTrash):hover {
     opacity: 1;
   }
 }
+
+.model-container {
+  @apply relative p-6 border border-white/10 rounded-lg transition-all duration-300 cursor-pointer bg-zinc-800/50;
+  min-width: 200px;
+}
+
+.model-container:hover {
+  @apply border-white/20;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.model-container.selected {
+  @apply border-white/30;
+  background: linear-gradient(45deg, #8A2387, #E94057, #F27121);
+  background-size: 200% 200%;
+  animation: gradientMove 3s ease infinite;
+}
+
+.model-container.selected:hover {
+  background: linear-gradient(45deg, #8A2387, #E94057, #F27121);
+}
+
+.model-container.highlighted {
+  @apply border-white/20;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.model-container.highlighted.selected {
+  box-shadow: 0 0 20px rgba(242, 113, 33, 0.2);
+}
+
+.info-button {
+  @apply text-gray-400 hover:text-white transition-colors;
+  padding: 8px;
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

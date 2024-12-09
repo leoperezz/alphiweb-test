@@ -10,6 +10,7 @@ import { useAuth } from '../context/AuthContext';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../config/firestore';
 import { getGlobalProjects } from '../config/firestore';
+import FileRenderer from './components/FileRenderer';
 
 interface Project {
   projectName: string;
@@ -320,13 +321,11 @@ export default function Overview() {
                 {/* Lista de archivos con scroll */}
                 <div className="max-h-48 overflow-y-auto modal-scroll space-y-2">
                   {filteredFiles.map((fileName, index) => (
-                    <div 
+                    <FileRenderer 
                       key={index}
-                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
-                    >
-                      <IoDocument className="text-emerald-500" />
-                      <span className="text-sm text-white/70">{fileName}</span>
-                    </div>
+                      fileName={fileName}
+                      showSize={false}
+                    />
                   ))}
                 </div>
               </div>

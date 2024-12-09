@@ -7,8 +7,13 @@ import { getLlamaCloudKey } from '../../config/firestore';
 import Sidebar from '../../components/Sidebar';
 import { IoCloudUpload, IoInformationCircle, IoClose, IoArrowForward } from 'react-icons/io5';
 import { FiFile } from 'react-icons/fi';
-import { FaFolder } from 'react-icons/fa';
 import Header from '../components/Header';
+import { LuDatabaseZap } from 'react-icons/lu';
+import { PiGraph } from 'react-icons/pi';
+import { FaRegFilePdf } from "react-icons/fa";
+import { GrDocumentTxt } from "react-icons/gr";
+import { BsFiletypeMd, BsFiletypePptx, BsFiletypeDocx } from "react-icons/bs";
+import FileRenderer from '../components/FileRenderer';
 
 export default function CreateAgent() {
   const { user } = useAuth();
@@ -19,13 +24,16 @@ export default function CreateAgent() {
     description: '',
     temperature: 0.7,
     instructions: '',
-    parser: 'text' as 'text' | 'llama cloud',
     files: [] as File[]
   });
   const [showPreview, setShowPreview] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [llamaKeyValid, setLlamaKeyValid] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedModel, setSelectedModel] = useState<'basic' | 'lightrag'>('basic');
+  const [infoModalVisible, setInfoModalVisible] = useState(false);
+  const [infoModalContent, setInfoModalContent] = useState('');
+  const [fileTypeError, setFileTypeError] = useState<string | null>(null);
 
   useEffect(() => {
     const checkLlamaKey = async () => {
@@ -37,14 +45,6 @@ export default function CreateAgent() {
     checkLlamaKey();
   }, [user]);
 
-  const handleParserChange = async (value: string) => {
-    if (value === 'llama cloud' && !llamaKeyValid) {
-      alert('Por favor, configura una API key válida de Llama Cloud en la sección de Settings');
-      return;
-    }
-    setFormData(prev => ({ ...prev, parser: value as 'text' | 'llama cloud' }));
-  };
-
   const extractFilesFromDirectory = async (entry: FileSystemEntry): Promise<File[]> => {
     const files: File[] = [];
     
@@ -52,7 +52,9 @@ export default function CreateAgent() {
       const file = await new Promise<File>((resolve) => {
         (entry as FileSystemFileEntry).file(resolve);
       });
-      files.push(file);
+      if (isFileTypeAllowed(file.name)) {
+        files.push(file);
+      }
     } else if (entry.isDirectory) {
       const dirReader = (entry as FileSystemDirectoryEntry).createReader();
       const entries = await new Promise<FileSystemEntry[]>((resolve) => {
@@ -72,13 +74,27 @@ export default function CreateAgent() {
     e.preventDefault();
     const items = Array.from(e.dataTransfer.items);
     const allFiles: File[] = [];
+    const disallowedFiles: string[] = [];
 
     for (const item of items) {
       const entry = item.webkitGetAsEntry();
       if (entry) {
         const files = await extractFilesFromDirectory(entry);
         allFiles.push(...files);
+        
+        if (entry.isFile) {
+          const file = await new Promise<File>((resolve) => {
+            (entry as FileSystemFileEntry).file(resolve);
+          });
+          if (!isFileTypeAllowed(file.name)) {
+            disallowedFiles.push(file.name);
+          }
+        }
       }
+    }
+
+    if (disallowedFiles.length > 0) {
+      setFileTypeError("Only the following file types are allowed: docx, pptx, md, txt, pdf.");
     }
 
     setFormData(prev => ({
@@ -87,13 +103,26 @@ export default function CreateAgent() {
     }));
   };
 
+  const isFileTypeAllowed = (fileName: string) => {
+    const allowedExtensions = ['docx', 'pptx', 'md', 'txt', 'pdf'];
+    const fileExtension = fileName.split('.').pop()?.toLowerCase();
+    return allowedExtensions.includes(fileExtension || '');
+  };
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files || []);
+    const allowedFiles = newFiles.filter(file => isFileTypeAllowed(file.name));
+    const disallowedFiles = newFiles.filter(file => !isFileTypeAllowed(file.name));
+
+    if (disallowedFiles.length > 0) {
+      setFileTypeError("Only the following file types are allowed: docx, pptx, md, txt, pdf.");
+    }
+
     setFormData(prev => ({
       ...prev,
-      files: [...prev.files, ...newFiles]
+      files: [...prev.files, ...allowedFiles]
     }));
-    // Resetear el input para permitir seleccionar el mismo archivo nuevamente
+
     e.target.value = '';
   };
 
@@ -125,10 +154,6 @@ export default function CreateAgent() {
       setError("At least one file is required");
       return false;
     }
-    if (formData.parser === 'llama cloud' && !llamaKeyValid) {
-      setError("Valid Llama Cloud API key is required");
-      return false;
-    }
     return true;
   };
 
@@ -148,14 +173,14 @@ export default function CreateAgent() {
     formDataToSend.append('projectDescription', formData.description);
     formDataToSend.append('projectTemperature', formData.temperature.toString());
     formDataToSend.append('projectSystemPrompt', formData.instructions);
-    formDataToSend.append('projectParser', formData.parser);
+    formDataToSend.append('typeModel', selectedModel);
 
     formData.files.forEach((file) => {
       formDataToSend.append('files', file);
     });
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_ENDPOINT_API}/upload`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_ENDPOINT_API}/create`, {
         method: 'POST',
         body: formDataToSend,
       });
@@ -170,6 +195,10 @@ export default function CreateAgent() {
       console.error('Error:', error);
       // Manejar error
     }
+  };
+
+  const handleModelSelect = (model: 'basic' | 'lightrag') => {
+    setSelectedModel(model);
   };
 
   const FilePreviewModal = () => {
@@ -192,19 +221,12 @@ export default function CreateAgent() {
             {formData.files.map((file, index) => (
               <div 
                 key={index}
-                className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors group"
+                className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors group"
               >
-                {file.name.includes('.') ? (
-                  <FiFile className="text-emerald-400 text-xl" />
-                ) : (
-                  <FaFolder className="text-yellow-400 text-xl" />
-                )}
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm truncate">{file.name}</p>
-                  <p className="text-xs text-gray-400">
-                    {(file.size / 1024 / 1024).toFixed(2)} MB
-                  </p>
-                </div>
+                <FileRenderer 
+                  fileName={file.name}
+                  size={file.size}
+                />
                 <button
                   onClick={() => removeFile(index)}
                   className="text-gray-400 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
@@ -277,6 +299,82 @@ export default function CreateAgent() {
     );
   };
 
+  const handleInfoClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const showInfoModal = (content: string) => {
+    setInfoModalContent(content);
+    setInfoModalVisible(true);
+  };
+
+  const InfoModal = () => {
+    if (!infoModalVisible) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="bg-[#1a1a1a] rounded-lg p-6 max-w-md w-full mx-4">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-medium text-white">Model Information</h3>
+            <button 
+              onClick={() => setInfoModalVisible(false)}
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              <IoClose size={24} />
+            </button>
+          </div>
+          <p className="text-gray-300">{infoModalContent}</p>
+          <button
+            onClick={() => setInfoModalVisible(false)}
+            className="mt-4 w-full px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  const FileTypeErrorModal = () => {
+    if (!fileTypeError) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="bg-[#1a1a1a] rounded-lg p-6 max-w-md w-full mx-4">
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center gap-2">
+              <IoInformationCircle className="text-xl text-red-400" />
+              <h3 className="text-lg font-medium text-white">File Type Error</h3>
+            </div>
+            <button 
+              onClick={() => setFileTypeError(null)}
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              <IoClose size={24} />
+            </button>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-lg p-4 mb-4">
+            <p className="text-gray-300">{fileTypeError}</p>
+            <ul className="mt-2 space-y-1 text-gray-400 text-sm">
+              <li>• Word Documents (.docx)</li>
+              <li>• PowerPoint Presentations (.pptx)</li>
+              <li>• Markdown Files (.md)</li>
+              <li>• Text Files (.txt)</li>
+              <li>• PDF Documents (.pdf)</li>
+            </ul>
+          </div>
+          <button
+            onClick={() => setFileTypeError(null)}
+            className="w-full px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors text-sm font-medium"
+          >
+            Got it
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="flex min-h-screen font-geist">
       <div className="fixed left-0 top-0">
@@ -309,7 +407,7 @@ export default function CreateAgent() {
                   <label className="block text-sm font-medium mb-2">Project Name</label>
                   <input
                     type="text"
-                    className="form-input"
+                    className="form-input h-12"
                     placeholder="Enter your project name"
                     value={formData.projectName}
                     onChange={(e) => setFormData(prev => ({ ...prev, projectName: e.target.value }))}
@@ -320,7 +418,7 @@ export default function CreateAgent() {
                   <label className="block text-sm font-medium mb-2">Assistant Name</label>
                   <input
                     type="text"
-                    className="form-input"
+                    className="form-input h-12"
                     placeholder="Give your assistant a name"
                     value={formData.assistantName}
                     onChange={(e) => setFormData(prev => ({ ...prev, assistantName: e.target.value }))}
@@ -330,7 +428,7 @@ export default function CreateAgent() {
                 <div>
                   <label className="block text-sm font-medium mb-2">Description</label>
                   <textarea
-                    className="form-input h-24"
+                    className="form-input h-32"
                     placeholder="Describe what your assistant will do"
                     value={formData.description}
                     onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
@@ -359,7 +457,7 @@ export default function CreateAgent() {
                 <div>
                   <label className="block text-sm font-medium mb-2">Instructions</label>
                   <textarea
-                    className="form-input h-32"
+                    className="form-input h-40"
                     placeholder="Provide specific instructions for your assistant"
                     value={formData.instructions}
                     onChange={(e) => setFormData(prev => ({ ...prev, instructions: e.target.value }))}
@@ -367,26 +465,57 @@ export default function CreateAgent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Parser Type</label>
-                  <select
-                    className="form-input"
-                    value={formData.parser}
-                    onChange={(e) => handleParserChange(e.target.value)}
-                  >
-                    <option value="text">Text</option>
-                    <option value="llama cloud">Llama Cloud</option>
-                  </select>
-                  {formData.parser === 'llama cloud' && !llamaKeyValid && (
-                    <p className="text-red-400 text-sm mt-1">
-                      Se requiere una API key válida de Llama Cloud. Por favor, configúrala en Settings.
-                    </p>
-                  )}
+                  <label className="block text-sm font-medium mb-2">Model</label>
+                  <div className="flex gap-4">
+                    <div
+                      className={`model-container ${selectedModel === 'basic' ? 'selected' : ''}`}
+                      onClick={() => handleModelSelect('basic')}
+                    >
+                      <div className="relative z-10">
+                        <h3 className="text-center">Traditional</h3>
+                        <LuDatabaseZap className="mx-auto text-4xl mb-2" />
+                        <button 
+                          className="info-button absolute top-0 right-0" 
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            showInfoModal("The traditional model. Good for most tasks, low cost, specifically designed for concise answers.");
+                          }}
+                          title="The traditional model. Good for most tasks, low cost, specifically designed for concise answers."
+                        >
+                          <IoInformationCircle size={20} />
+                        </button>
+                        <p className="text-center text-sm mt-2">$0.1 per 1k pages</p>
+                      </div>
+                    </div>
+                    <div
+                      className={`model-container ${selectedModel === 'lightrag' ? 'selected' : ''} highlighted`}
+                      onClick={() => handleModelSelect('lightrag')}
+                    >
+                      <div className="relative z-10">
+                        <h3 className="text-center">Advanced</h3>
+                        <PiGraph className="mx-auto text-4xl mb-2" />
+                        <button 
+                          className="info-button absolute top-0 right-0" 
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            showInfoModal("The most advanced model. More accurate and complete responses, designed for concise answers and general contexts.");
+                          }}
+                          title="The most advanced model. More accurate and complete responses, designed for concise answers and general contexts."
+                        >
+                          <IoInformationCircle size={20} />
+                        </button>
+                        <p className="text-center text-sm mt-2">$1 per 1k pages</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Upload Data</label>
                   <div
-                    className="border-2 border-dashed border-white/10 rounded-lg p-6 text-center hover:border-white/30 transition-all duration-300"
+                    className="border-2 border-dashed border-white/10 rounded-lg p-12 text-center hover:border-white/30 transition-all duration-300"
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={handleDrop}
                   >
@@ -444,6 +573,8 @@ export default function CreateAgent() {
       <FilePreviewModal />
       <LoadingModal />
       <ErrorModal />
+      <InfoModal />
+      <FileTypeErrorModal />
     </div>
   );
 }
