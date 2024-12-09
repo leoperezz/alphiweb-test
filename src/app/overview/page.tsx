@@ -11,6 +11,8 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../config/firestore';
 import { getGlobalProjects } from '../config/firestore';
 import FileRenderer from './components/FileRenderer';
+import { LuDatabaseZap } from 'react-icons/lu';
+import { PiGraph } from 'react-icons/pi';
 
 interface Project {
   projectName: string;
@@ -23,7 +25,28 @@ interface Project {
   projectDescription: string;
   projectFileNames: string[];
   isGlobal?: boolean;
+  projectTypeModel: 'basic' | 'lightrag';
 }
+
+const getModelDisplay = (type: 'basic' | 'lightrag') => {
+  switch (type) {
+    case 'basic':
+      return {
+        icon: <LuDatabaseZap className="text-lg text-blue-500" />,
+        name: 'Traditional'
+      };
+    case 'lightrag':
+      return {
+        icon: <PiGraph className="text-lg text-blue-500" />,
+        name: 'Advanced'
+      };
+    default:
+      return {
+        icon: <LuDatabaseZap className="text-lg text-blue-500" />,
+        name: 'Traditional'
+      };
+  }
+};
 
 export default function Overview() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -240,6 +263,7 @@ export default function Overview() {
                     status={project.projectStatus}
                     message={project.projectMessage}
                     progress={project.projectLoading}
+                    projectTypeModel={project.projectTypeModel}
                     onClick={() => handleProjectClick(project)}
                   />
                 ))}
@@ -293,6 +317,15 @@ export default function Overview() {
                   }`}>
                     {selectedProject.projectStatus}
                   </span>
+                </div>
+                <div>
+                  <h3 className="text-white/50 text-sm mb-1">Model</h3>
+                  <div className="flex items-center gap-2">
+                    {getModelDisplay(selectedProject.projectTypeModel).icon}
+                    <span className="text-white">
+                      {getModelDisplay(selectedProject.projectTypeModel).name}
+                    </span>
+                  </div>
                 </div>
               </div>
 

@@ -2,6 +2,8 @@
 'use client'
 
 import FileRenderer from '../overview/components/FileRenderer';
+import { LuDatabaseZap } from 'react-icons/lu';
+import { PiGraph } from 'react-icons/pi';
 
 interface AgentCardProps {
   name: string;
@@ -11,10 +13,11 @@ interface AgentCardProps {
   message: string;
   progress: number;
   files?: { name: string; size?: number }[];
+  projectTypeModel: 'basic' | 'lightrag';
   onClick: () => void;
 }
 
-export default function AgentCard({ name, projectId, created, status, message, progress, files = [], onClick }: AgentCardProps) {
+export default function AgentCard({ name, projectId, created, status, message, progress, files = [], projectTypeModel, onClick }: AgentCardProps) {
   const getStatusStyles = (status: string) => {
     switch (status) {
       case 'active':
@@ -62,6 +65,22 @@ export default function AgentCard({ name, projectId, created, status, message, p
           </span>
         </div>
         
+        {/* Tipo de modelo */}
+        <div className="flex items-center gap-2">
+          <span className="text-white/70 text-sm">Model:</span>
+          {projectTypeModel === 'basic' ? (
+            <>
+              <LuDatabaseZap className="text-lg text-blue-500" />
+              <span className="text-white/70 text-sm">Traditional</span>
+            </>
+          ) : (
+            <>
+              <PiGraph className="text-lg text-blue-500" />
+              <span className="text-white/70 text-sm">Advanced</span>
+            </>
+          )}
+        </div>
+
         {/* Barra de progreso */}
         <div className="mt-6">
           <div className="w-full bg-white/5 rounded-full h-2">
