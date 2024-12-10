@@ -10,9 +10,6 @@ import { FiFile } from 'react-icons/fi';
 import Header from '../components/Header';
 import { LuDatabaseZap } from 'react-icons/lu';
 import { PiGraph } from 'react-icons/pi';
-import { FaRegFilePdf } from "react-icons/fa";
-import { GrDocumentTxt } from "react-icons/gr";
-import { BsFiletypeMd, BsFiletypePptx, BsFiletypeDocx } from "react-icons/bs";
 import FileRenderer from '../components/FileRenderer';
 
 export default function CreateAgent() {
