@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
-import AgentCard from '../components/AgentCard';
+import AgentCard from './components/AgentCard';
 import { useRouter } from 'next/navigation';
 import { IoAdd, IoClose, IoSearch, IoDocument, IoTrash, IoPencil, IoChatbubbles } from 'react-icons/io5';
 import Header from './components/Header';
@@ -281,7 +281,7 @@ export default function Overview() {
       {/* Modal de detalles del proyecto */}
       {selectedProject && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] rounded-lg max-w-2xl w-full max-h-[80vh] border border-white/10">
+          <div className="bg-[#1a1a1a] rounded-lg max-w-2xl w-full max-h-[90vh] border border-white/10 flex flex-col">
             {/* Header del modal */}
             <div className="p-6 border-b border-white/10 flex justify-between items-start">
               <div>
@@ -296,8 +296,8 @@ export default function Overview() {
               </button>
             </div>
 
-            {/* Contenido del modal */}
-            <div className="p-6 space-y-6">
+            {/* Contenido del modal - Agregar scroll solo al contenido */}
+            <div className="p-6 space-y-6 overflow-y-auto">
               {/* Detalles básicos */}
               <div className="space-y-4">
                 <div>
@@ -364,8 +364,8 @@ export default function Overview() {
               </div>
             </div>
 
-            {/* Footer con botones */}
-            <div className="p-6 border-t border-white/10 flex justify-end gap-3">
+            {/* Footer con botones - Mantener fijo en la parte inferior */}
+            <div className="p-6 border-t border-white/10 flex justify-end gap-3 mt-auto sticky bottom-0 bg-[#1a1a1a]">
               {selectedProject && renderModalButtons(selectedProject)}
             </div>
           </div>

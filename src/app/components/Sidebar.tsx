@@ -2,12 +2,13 @@
 'use client'
 import Link from 'next/link';
 import { useState } from 'react';
-import { FiUsers, FiGrid, FiSettings } from 'react-icons/fi';
-import { IoChevronUpOutline, IoChevronDownOutline, IoPersonCircleOutline, IoLogOutOutline } from 'react-icons/io5';
+import { FiUsers, FiSettings } from 'react-icons/fi';
+import { VscDiffAdded } from "react-icons/vsc";
+import { IoLogOutOutline } from 'react-icons/io5';
+import { RiRobot2Line } from "react-icons/ri";
 import { useAuth } from '../context/AuthContext';
 
 export default function Sidebar() {
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
 
   const handleLogout = async () => {
@@ -30,14 +31,19 @@ export default function Sidebar() {
       </div>
       
       <nav className="mt-6 flex-1">
-        <Link href="/overview" className="flex items-center gap-3 px-6 py-2.5 text-white/70 hover:text-white hover:bg-white/5">
-          <FiUsers className="text-lg" />
+        <Link href="/overview/" className="flex items-center gap-3 px-6 py-2.5 text-white/70 hover:text-white hover:bg-white/5">
+          <RiRobot2Line className="text-lg" />
           <span>Agents</span>
         </Link>
         
-        <Link href="/overview/dashboard" className="flex items-center gap-3 px-6 py-2.5 text-white/70 hover:text-white hover:bg-white/5">
-          <FiGrid className="text-lg" />
-          <span>Dashboard</span>
+        <Link href="/overview/create" className="flex items-center gap-3 px-6 py-2.5 text-white/70 hover:text-white hover:bg-white/5">
+          <VscDiffAdded className="text-lg" />
+          <span>Create</span>
+        </Link>
+        
+        <Link href="/overview/teams" className="flex items-center gap-3 px-6 py-2.5 text-white/70 hover:text-white hover:bg-white/5">
+          <FiUsers className="text-lg" />
+          <span>Teams</span>
         </Link>
         
         <Link href="/overview/settings" className="flex items-center gap-3 px-6 py-2.5 text-white/70 hover:text-white hover:bg-white/5">
@@ -46,11 +52,11 @@ export default function Sidebar() {
         </Link>
       </nav>
 
-      {/* User section - simplificado */}
+      {/* User section */}
       <div className="mt-auto pt-3 border-t border-white/10">
         <button 
           onClick={handleLogout}
-          className="logout-button"
+          className="flex items-center gap-3 px-6 py-2.5 w-full text-red-500/70 hover:text-red-400 justify-center transition-colors"
         >
           <IoLogOutOutline size={16} />
           <span>Logout</span>

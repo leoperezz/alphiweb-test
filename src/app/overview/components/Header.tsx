@@ -39,7 +39,7 @@ export default function Header() {
   };
 
   return (
-    <div className="h-16 border-b border-white/10 bg-black flex items-center justify-end px-8 gap-4">
+    <div className="h-[81px] border-b border-white/10 bg-black flex items-center justify-end px-8 gap-4">
       <div className="relative">
         <button 
           onClick={handleNotificationClick}

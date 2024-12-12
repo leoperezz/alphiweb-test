@@ -463,48 +463,43 @@ export default function CreateAgent() {
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Model</label>
-                  <div className="flex gap-4">
+                  <div className="grid grid-cols-2 gap-6 mb-8 max-w-md">
                     <div
                       className={`model-container ${selectedModel === 'basic' ? 'selected' : ''}`}
                       onClick={() => handleModelSelect('basic')}
                     >
-                      <div className="relative z-10">
-                        <h3 className="text-center">Traditional</h3>
-                        <LuDatabaseZap className="mx-auto text-4xl mb-2" />
-                        <button 
-                          className="info-button absolute top-0 right-0" 
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            showInfoModal("The traditional model. Good for most tasks, low cost, specifically designed for concise answers.");
-                          }}
-                          title="The traditional model. Good for most tasks, low cost, specifically designed for concise answers."
-                        >
-                          <IoInformationCircle size={20} />
-                        </button>
-                        <p className="text-center text-sm mt-2">$0.1 per 1k pages</p>
-                      </div>
+                      <h3 className="text-center">Traditional</h3>
+                      <LuDatabaseZap className="mx-auto text-4xl mb-2" />
+                      <button 
+                        className="info-button absolute top-2 right-2" 
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          showInfoModal("The traditional model. Good for most tasks, low cost, specifically designed for concise answers.");
+                        }}
+                      >
+                        <IoInformationCircle size={20} />
+                      </button>
+                      <p className="text-center text-sm mt-2">$0.1 per 1k pages</p>
                     </div>
+
                     <div
-                      className={`model-container ${selectedModel === 'lightrag' ? 'selected' : ''} highlighted`}
+                      className={`model-container ${selectedModel === 'lightrag' ? 'selected' : ''}`}
                       onClick={() => handleModelSelect('lightrag')}
                     >
-                      <div className="relative z-10">
-                        <h3 className="text-center">Advanced</h3>
-                        <PiGraph className="mx-auto text-4xl mb-2" />
-                        <button 
-                          className="info-button absolute top-0 right-0" 
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            showInfoModal("The most advanced model. More accurate and complete responses, designed for concise answers and general contexts.");
-                          }}
-                          title="The most advanced model. More accurate and complete responses, designed for concise answers and general contexts."
-                        >
-                          <IoInformationCircle size={20} />
-                        </button>
-                        <p className="text-center text-sm mt-2">$1 per 1k pages</p>
-                      </div>
+                      <h3 className="text-center">Advanced</h3>
+                      <PiGraph className="mx-auto text-4xl mb-2" />
+                      <button 
+                        className="info-button absolute top-2 right-2" 
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          showInfoModal("The most advanced model. More accurate and complete responses, designed for concise answers and general contexts.");
+                        }}
+                      >
+                        <IoInformationCircle size={20} />
+                      </button>
+                      <p className="text-center text-sm mt-2">$1 per 1k pages</p>
                     </div>
                   </div>
                 </div>
