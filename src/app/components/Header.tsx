@@ -12,16 +12,15 @@ export default function Header() {
 
         {/* Navigation links */}
         <nav className="flex gap-8 items-center font-geist">
-          <a href="#" className="nav-link">Home</a>
-          <a href="#" className="nav-link">About</a>
-          <a href="#" className="nav-link">Docs</a>
-          <a href="#" className="nav-link">Pricing</a>
+          <Link href="/" className="nav-link">Home</Link>
+          <Link href="/docs" className="nav-link">Docs</Link>
+          <Link href="/pricing" className="nav-link">Pricing</Link>
         </nav>
 
         {/* Connect button */}
         <Link href="/login">
           <button className="nav-button">
-            Connect
+            Sign in
           </button>
         </Link>
       </header>

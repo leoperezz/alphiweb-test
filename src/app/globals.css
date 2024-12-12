@@ -78,9 +78,9 @@ body {
 
 /* Para el efecto de gradiente activo */
 .gradient-active {
-  background: linear-gradient(45deg, #40E0D0, #FF8C00, #FF0080);
+  background: linear-gradient(45deg, #FCCB90, #D57EEB);
   background-size: 200% 200%;
-  animation: gradient 3s ease infinite;
+  animation: gradientMove 3s ease infinite;
 }
 
 .typewriter-text {
@@ -789,5 +789,98 @@ button:has(.IoTrash):hover {
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+
+.feature-card-new {
+  @apply bg-zinc-900/50 rounded-xl p-6 border border-zinc-800 
+         transition-all duration-500 hover:border-[#D57EEB]/30;
+  transform-style: preserve-3d;
+}
+
+.feature-card-new:hover {
+  transform: translateY(-10px) rotateX(5deg);
+  box-shadow: 0 15px 30px rgba(213, 126, 235, 0.1);
+}
+
+.feature-icon {
+  @apply text-[#FCCB90] transition-all duration-300;
+  filter: drop-shadow(0 0 8px rgba(252, 203, 144, 0.3));
+}
+
+.feature-card-new:hover .feature-icon {
+  @apply text-[#D57EEB];
+  transform: scale(1.1) translateY(-5px);
+  filter: drop-shadow(0 0 12px rgba(213, 126, 235, 0.4));
+}
+
+.use-case-card {
+  @apply relative overflow-hidden;
+  background: linear-gradient(45deg, transparent 50%, rgba(213, 126, 235, 0.1) 100%);
+}
+
+.use-case-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(252, 203, 144, 0.1), rgba(213, 126, 235, 0.1));
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.use-case-card:hover::before {
+  transform: translateX(0);
+}
+
+.use-case-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(213, 126, 235, 0.1);
+}
+
+.benefit-item {
+  @apply relative overflow-hidden rounded-lg p-3 transition-all duration-300;
+}
+
+.benefit-item:hover {
+  @apply bg-white/5;
+  transform: translateX(10px);
+}
+
+.benefit-icon {
+  @apply text-[#FCCB90] transition-all duration-300;
+}
+
+.benefit-item:hover .benefit-icon {
+  @apply text-[#D57EEB];
+  transform: scale(1.2) rotate(10deg);
+}
+
+/* Actualiza los gradientes existentes */
+.gradient-active {
+  background: linear-gradient(45deg, #FCCB90, #D57EEB);
+  background-size: 200% 200%;
+  animation: gradientMove 3s ease infinite;
+}
+
+/* Actualiza las animaciones de hover para los botones */
+button:hover {
+  box-shadow: 0 0 20px rgba(213, 126, 235, 0.3);
+}
+
+/* Añade efecto de brillo para elementos destacados */
+.glow-effect {
+  box-shadow: 0 0 15px rgba(252, 203, 144, 0.3);
+  animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(252, 203, 144, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(213, 126, 235, 0.4);
   }
 }
