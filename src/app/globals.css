@@ -797,14 +797,19 @@ button:has(.IoTrash):hover {
 }
 
 .feature-card-new {
-  @apply bg-zinc-900/50 rounded-xl p-6 border border-zinc-800 
-         transition-all duration-500 hover:border-[#D57EEB]/30;
-  transform-style: preserve-3d;
+  @apply bg-black border border-zinc-800 p-8 rounded-xl
+         transition-all duration-500 hover:border-[#D57EEB]/30
+         transform opacity-0 translate-y-10;
+  backdrop-filter: none;
+}
+
+.feature-card-new.visible {
+  @apply opacity-100 translate-y-0;
 }
 
 .feature-card-new:hover {
-  transform: translateY(-10px) rotateX(5deg);
-  box-shadow: 0 15px 30px rgba(213, 126, 235, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(213, 126, 235, 0.25);
+  transform: translateY(-10px);
 }
 
 .feature-icon {
@@ -819,33 +824,30 @@ button:has(.IoTrash):hover {
 }
 
 .use-case-card {
-  @apply relative overflow-hidden;
-  background: linear-gradient(45deg, transparent 50%, rgba(213, 126, 235, 0.1) 100%);
+  @apply relative overflow-hidden bg-black opacity-0;
+  transform: translateX(-20px);
+  transition: all 0.5s ease-out;
 }
 
-.use-case-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, rgba(252, 203, 144, 0.1), rgba(213, 126, 235, 0.1));
-  transform: translateX(-100%);
-  transition: transform 0.6s ease;
-}
-
-.use-case-card:hover::before {
+.use-case-card.visible {
+  opacity: 1;
   transform: translateX(0);
 }
 
 .use-case-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-5px) scale(1.02);
   box-shadow: 0 10px 20px rgba(213, 126, 235, 0.1);
 }
 
 .benefit-item {
-  @apply relative overflow-hidden rounded-lg p-3 transition-all duration-300;
+  @apply relative overflow-hidden rounded-lg p-3 opacity-0;
+  transform: translateX(-20px);
+  transition: all 0.4s ease-out;
+}
+
+.benefit-item.visible {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .benefit-item:hover {
@@ -965,4 +967,154 @@ button:has(.IoLogOutOutline):hover {
   position: relative;
   z-index: 1;
   background: transparent;
+}
+
+/* Efecto de scroll suave entre secciones */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Actualización para el fondo unificado */
+.features-section {
+  background: black;
+  position: relative;
+}
+
+.features-section::before {
+  display: none;
+}
+
+/* Animaciones mejoradas para scroll */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* Agregar el efecto de fade in para las secciones */
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 1s ease-out;
+}
+
+.fade-in-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Agregar este script al final de tu componente page.tsx */
+
+/* Animaciones mejoradas para cada sección */
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s ease-out;
+}
+
+.fade-in-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Animación para el título */
+.animate-title {
+  animation: titleFadeIn 1s ease-out forwards;
+}
+
+@keyframes titleFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Feature Cards */
+.feature-card-new {
+  @apply bg-black border border-zinc-800 p-8 rounded-xl
+         transition-all duration-500 hover:border-[#D57EEB]/30
+         transform opacity-0 translate-y-10;
+  backdrop-filter: none;
+}
+
+.feature-card-new.visible {
+  @apply opacity-100 translate-y-0;
+}
+
+/* Use Cases */
+.use-case-card {
+  @apply relative overflow-hidden bg-black opacity-0;
+  transform: translateX(-20px);
+  transition: all 0.5s ease-out;
+}
+
+.use-case-card.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.use-case-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 10px 20px rgba(213, 126, 235, 0.1);
+}
+
+/* Benefits */
+.benefit-item {
+  @apply relative overflow-hidden rounded-lg p-3 opacity-0;
+  transform: translateX(-20px);
+  transition: all 0.4s ease-out;
+}
+
+.benefit-item.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.benefit-item:hover {
+  @apply bg-white/5;
+  transform: translateX(10px);
+}
+
+/* Iconos con efectos mejorados */
+.feature-icon {
+  @apply text-[#FCCB90] transition-all duration-300;
+  filter: drop-shadow(0 0 8px rgba(252, 203, 144, 0.3));
+}
+
+.feature-card-new:hover .feature-icon {
+  @apply text-[#D57EEB];
+  transform: scale(1.1) translateY(-5px) rotate(5deg);
+  filter: drop-shadow(0 0 12px rgba(213, 126, 235, 0.4));
+}
+
+/* CTA Section */
+.cta-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, rgba(252, 203, 144, 0.1), rgba(213, 126, 235, 0.1));
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+.cta-section.is-visible::before {
+  opacity: 1;
 }

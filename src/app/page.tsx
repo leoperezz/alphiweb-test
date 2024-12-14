@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Header from './components/Header'
 import Link from 'next/link'
 import { RiRobot2Line, RiTeamLine, RiMessage2Line } from 'react-icons/ri'
@@ -9,20 +9,60 @@ import Image from 'next/image'
 import Footer from './components/Footer'
 
 export default function Home() {
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) {
+          entry.target.classList.remove('is-visible');
+          const cards = entry.target.querySelectorAll('.feature-card-new, .use-case-card, .benefit-item');
+          cards.forEach(card => {
+            card.classList.remove('visible');
+          });
+        }
+        else {
+          entry.target.classList.add('is-visible');
+          const cards = entry.target.querySelectorAll('.feature-card-new');
+          cards.forEach((card, index) => {
+            setTimeout(() => {
+              card.classList.add('visible');
+            }, index * 200);
+          });
+          
+          const useCases = entry.target.querySelectorAll('.use-case-card');
+          useCases.forEach((card, index) => {
+            setTimeout(() => {
+              card.classList.add('visible');
+            }, index * 150);
+          });
+          
+          const benefits = entry.target.querySelectorAll('.benefit-item');
+          benefits.forEach((item, index) => {
+            setTimeout(() => {
+              item.classList.add('visible');
+            }, index * 100);
+          });
+        }
+      });
+    }, { threshold: 0.1 });
+
+    const sections = document.querySelectorAll('.fade-in-section');
+    sections.forEach(section => observer.observe(section));
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="min-h-screen bg-black flex flex-col">
+    <div className="min-h-screen bg-black flex flex-col relative">
       <Header />
       <main className="flex-1">
         {/* Hero Section - Ahora ocupa toda la pantalla */}
-        <section className="min-h-screen flex flex-col justify-center items-center px-4 relative">
-          <div className="absolute inset-0 bg-gradient-to-b from-[#D57EEB]/10 to-transparent pointer-events-none" />
+        <section className="min-h-screen flex flex-col justify-center items-center px-4 relative fade-in-section">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl font-light mb-6 leading-tight bg-gradient-to-r from-[#FCCB90] to-[#D57EEB] bg-clip-text text-transparent">
-              Conversaciones Inteligentes con tus Documentos
+            <h1 className="text-5xl font-light mb-6 leading-tight bg-gradient-to-r from-[#FCCB90] to-[#D57EEB] bg-clip-text text-transparent font-geist">
+              Todos tus documentos potenciados con IA
             </h1>
-            <p className="text-gray-400 text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
-              Crea agentes de IA personalizados que interactúan con tus archivos y documentos de manera natural. 
-              Comparte conocimiento, automatiza consultas y potencia tu negocio.
+            <p className="text-gray-400 text-xl mb-10 max-w-2xl mx-auto leading-relaxed font-geist">
+              Interactúa con tus documentos de manera inteligente y natural
             </p>
             <button className="px-8 py-3 text-sm font-light tracking-wider text-black bg-white hover:bg-gray-100 transition-all duration-300">
               COMENZAR AHORA
@@ -31,31 +71,52 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section className="py-24 bg-zinc-900">
-          <div className="max-w-6xl mx-auto px-4">
-            <h2 className="text-2xl font-light text-center mb-16 bg-gradient-to-r from-[#FCCB90] to-[#D57EEB] bg-clip-text text-transparent">
+        <section className="py-32 bg-black">
+          <div className="max-w-7xl mx-auto px-4">
+            <h2 className="text-5xl md:text-6xl font-light text-center mb-20 bg-gradient-to-r from-[#FCCB90] to-[#D57EEB] bg-clip-text text-transparent animate-title">
               Características Principales
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 fade-in-section">
               <div className="text-center feature-card-new">
-                <RiRobot2Line className="text-4xl mx-auto mb-6 feature-icon" />
-                <h3 className="text-xl font-light mb-4">Agentes Personalizados</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">
+                <RiRobot2Line className="text-5xl mx-auto mb-8 feature-icon" />
+                <h3 className="text-2xl font-light mb-4">Agentes Personalizados</h3>
+                <p className="text-gray-400 text-base leading-relaxed">
                   Crea agentes especializados para diferentes tareas y áreas de conocimiento.
                 </p>
               </div>
               <div className="text-center feature-card-new">
-                <RiTeamLine className="text-4xl mx-auto mb-6 feature-icon" />
-                <h3 className="text-xl font-light mb-4">Colaboración en Equipo</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">
+                <RiTeamLine className="text-5xl mx-auto mb-8 feature-icon" />
+                <h3 className="text-2xl font-light mb-4">Colaboración en Equipo</h3>
+                <p className="text-gray-400 text-base leading-relaxed">
                   Comparte agentes y conocimiento entre equipos de manera eficiente.
                 </p>
               </div>
               <div className="text-center feature-card-new">
-                <RiMessage2Line className="text-4xl mx-auto mb-6 feature-icon" />
-                <h3 className="text-xl font-light mb-4">Chat Natural</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">
+                <RiMessage2Line className="text-5xl mx-auto mb-8 feature-icon" />
+                <h3 className="text-2xl font-light mb-4">Chat Natural</h3>
+                <p className="text-gray-400 text-base leading-relaxed">
                   Interactúa con tus documentos mediante conversaciones naturales.
+                </p>
+              </div>
+              <div className="text-center feature-card-new">
+                <FaRegClock className="text-5xl mx-auto mb-8 feature-icon" />
+                <h3 className="text-2xl font-light mb-4">Respuestas Rápidas</h3>
+                <p className="text-gray-400 text-base leading-relaxed">
+                  Obtén respuestas instantáneas gracias a nuestro procesamiento optimizado.
+                </p>
+              </div>
+              <div className="text-center feature-card-new">
+                <FaRegLightbulb className="text-5xl mx-auto mb-8 feature-icon" />
+                <h3 className="text-2xl font-light mb-4">Múltiples Formatos</h3>
+                <p className="text-gray-400 text-base leading-relaxed">
+                  Soporte para PDF, TXT, DOCX, PPTX, MD y más formatos de archivo.
+                </p>
+              </div>
+              <div className="text-center feature-card-new">
+                <FaRegChartBar className="text-5xl mx-auto mb-8 feature-icon" />
+                <h3 className="text-2xl font-light mb-4">Análisis Inteligente</h3>
+                <p className="text-gray-400 text-base leading-relaxed">
+                  Obtén insights y análisis profundos de tus documentos automáticamente.
                 </p>
               </div>
             </div>
@@ -63,12 +124,12 @@ export default function Home() {
         </section>
 
         {/* Use Cases Grid */}
-        <section className="py-24">
+        <section className="py-24 bg-black">
           <div className="max-w-6xl mx-auto px-4">
-            <h2 className="text-2xl font-light text-center mb-16 bg-gradient-to-r from-[#FCCB90] to-[#D57EEB] bg-clip-text text-transparent">
+            <h2 className="text-4xl font-light text-center mb-16 bg-gradient-to-r from-[#FCCB90] to-[#D57EEB] bg-clip-text text-transparent animate-title">
               Casos de Uso
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 fade-in-section">
               {[
                 "Soporte Técnico",
                 "Onboarding de Empleados",
@@ -92,12 +153,12 @@ export default function Home() {
         </section>
 
         {/* Benefits Section */}
-        <section className="py-24 bg-zinc-900">
+        <section className="py-24 bg-black">
           <div className="max-w-6xl mx-auto px-4">
-            <h2 className="text-2xl font-light text-center mb-16 bg-gradient-to-r from-[#FCCB90] to-[#D57EEB] bg-clip-text text-transparent">
+            <h2 className="text-4xl font-light text-center mb-16 bg-gradient-to-r from-[#FCCB90] to-[#D57EEB] bg-clip-text text-transparent animate-title">
               Beneficios
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 fade-in-section">
               <div>
                 <h3 className="text-xl font-light mb-8 text-white">Mayor Productividad</h3>
                 <ul className="space-y-4 text-gray-400">
@@ -137,7 +198,7 @@ export default function Home() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-32 text-center relative">
+        <section className="py-32 text-center relative fade-in-section">
           <div className="absolute inset-0 bg-gradient-to-t from-[#D57EEB]/10 to-transparent pointer-events-none" />
           <h2 className="text-3xl font-light mb-6 bg-gradient-to-r from-[#FCCB90] to-[#D57EEB] bg-clip-text text-transparent">
             Potencia tu Empresa con IA Conversacional

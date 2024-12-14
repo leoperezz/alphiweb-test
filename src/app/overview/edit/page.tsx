@@ -380,23 +380,6 @@ export default function EditAgent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Parser Type</label>
-                  <select
-                    className="form-input"
-                    value={formData.parser}
-                    onChange={(e) => handleParserChange(e.target.value)}
-                  >
-                    <option value="text">Text</option>
-                    <option value="llama cloud">Llama Cloud</option>
-                  </select>
-                  {formData.parser === 'llama cloud' && !llamaKeyValid && (
-                    <p className="text-red-400 text-sm mt-1">
-                      Se requiere una API key válida de Llama Cloud. Por favor, configúrala en Settings.
-                    </p>
-                  )}
-                </div>
-
-                <div>
                   <label className="block text-sm font-medium mb-2">Upload Data</label>
                   <div
                     className="border-2 border-dashed border-white/10 rounded-lg p-6 text-center hover:border-white/30 transition-all duration-300"

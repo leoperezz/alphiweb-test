@@ -1,13 +1,23 @@
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 export default function Header() {
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
-    <div>
+    <div className={`fixed w-full top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-black/70 backdrop-blur-md' : ''}`}>
       <header className="w-full p-4 flex justify-between items-center px-12">
         {/* Logo section */}
         <div className="flex items-center gap-4">
           <div className="w-8 h-8 bg-white rounded-full"></div>
-          <span className="text-white text-2xl font-semibold">Alphi</span>
         </div>
 
         {/* Navigation links */}
@@ -19,7 +29,7 @@ export default function Header() {
 
         {/* Connect button */}
         <Link href="/login">
-          <button className="nav-button">
+          <button className="px-8 py-3 text-sm font-light tracking-wider text-black bg-white hover:bg-gray-100 transition-all duration-300">
             Sign in
           </button>
         </Link>

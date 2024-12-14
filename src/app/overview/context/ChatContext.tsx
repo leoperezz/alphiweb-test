@@ -58,11 +58,22 @@ export function ChatProvider({ children, projectId }: { children: React.ReactNod
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/v1/chat/completions`, {
+      const apiMessages = messages.concat(newMessage).map(msg => ({
+        role: msg.sender === 'user' ? 'user' : 'assistant',
+        content: msg.content
+      }));
+
+      if (apiMessages.length > 20) {
+        const startIndex = apiMessages.length - 20;
+        const adjustedStartIndex = apiMessages[startIndex].role === 'assistant' ? startIndex + 1 : startIndex;
+        apiMessages.splice(0, adjustedStartIndex);
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_ENDPOINT_API_CHAT || 'http://localhost:8000'}/v1/chat/completions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [{ role: 'user', content: text }],
+          messages: apiMessages,
           stream: true,
           userId: user.uid,
           projectId: projectId
