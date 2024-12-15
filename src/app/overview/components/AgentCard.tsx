@@ -4,6 +4,7 @@
 import FileRenderer from './FileRenderer';
 import { LuDatabaseZap } from 'react-icons/lu';
 import { PiGraph } from 'react-icons/pi';
+import { IoShareSocial } from 'react-icons/io5';
 
 interface AgentCardProps {
   name: string;
@@ -15,9 +16,10 @@ interface AgentCardProps {
   files?: { name: string; size?: number }[];
   projectTypeModel: 'basic' | 'lightrag';
   onClick: () => void;
+  onShare?: () => void;
 }
 
-export default function AgentCard({ name, projectId, created, status, message, progress, files = [], projectTypeModel, onClick }: AgentCardProps) {
+export default function AgentCard({ name, projectId, created, status, message, progress, files = [], projectTypeModel, onClick, onShare }: AgentCardProps) {
   const getStatusStyles = (status: string) => {
     switch (status) {
       case 'active':
@@ -52,9 +54,20 @@ export default function AgentCard({ name, projectId, created, status, message, p
   return (
     <div 
       className="p-6 border border-white/10 rounded-lg font-geist text-sm transition-all duration-300 
-      hover:border-white/30 hover:shadow-lg hover:bg-white/5 max-w-sm cursor-pointer flex flex-col h-full"
+      hover:border-white/30 hover:shadow-lg hover:bg-white/5 max-w-sm relative cursor-pointer flex flex-col h-full"
       onClick={onClick}
     >
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onShare?.();
+        }}
+        className="absolute top-4 right-4 p-2 rounded-lg bg-white/5 hover:bg-white/10 
+        transition-colors text-white/50 hover:text-white"
+      >
+        <IoShareSocial className="text-lg" />
+      </button>
+
       <div className="flex-1">
         <h3 className="text-lg font-semibold mb-4">{name}</h3>
         <div className="space-y-3">

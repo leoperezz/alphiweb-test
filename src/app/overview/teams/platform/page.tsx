@@ -6,11 +6,10 @@ import Sidebar from '../../../components/Sidebar';
 import Header from '../../components/Header';
 import { IoAdd, IoSearch, IoClose, IoChatbubbles } from 'react-icons/io5';
 import AgentCard from '../../components/AgentCard';
-
-interface TeamMember {
-  email: string;
-  role: 'admin' | 'member';
-}
+import { getTeamInfo } from '../../../config/firestore';
+import { Team } from '../../../types/team';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../../config/firestore';
 
 interface TeamAgent {
   projectId: string;
@@ -20,6 +19,9 @@ interface TeamAgent {
   projectLoading: number;
   projectMessage: string;
   projectTypeModel: 'basic' | 'lightrag';
+  projectDescription: string;
+  projectAssistantName: string;
+  projectFileNames: string[];
 }
 
 export default function TeamPlatform() {
@@ -27,58 +29,61 @@ export default function TeamPlatform() {
   const teamId = searchParams.get('teamId');
   const router = useRouter();
   
-  const [teamData, setTeamData] = useState({
-    teamName: 'Development Team Alpha', // Mock data
-    members: [
-      { email: 'admin@example.com', role: 'admin' },
-      { email: 'member1@example.com', role: 'member' },
-      { email: 'member2@example.com', role: 'member' },
-    ] as TeamMember[],
-    agents: [
-      {
-        projectId: 'agent1',
-        projectName: 'Customer Support Bot',
-        projectStatus: 'active',
-        projectCreatedAt: '2024-03-20',
-        projectLoading: 100,
-        projectMessage: 'Running',
-        projectTypeModel: 'basic'
-      },
-      {
-        projectId: 'agent2',
-        projectName: 'Data Analysis Assistant',
-        projectStatus: 'building',
-        projectCreatedAt: '2024-03-21',
-        projectLoading: 60,
-        projectMessage: 'Processing files...',
-        projectTypeModel: 'lightrag'
-      }
-    ] as TeamAgent[]
-  });
-
+  const [teamData, setTeamData] = useState<Team | null>(null);
+  const [agents, setAgents] = useState<TeamAgent[]>([]);
+  const [loading, setLoading] = useState(true);
   const [memberSearchTerm, setMemberSearchTerm] = useState('');
   const [agentSearchTerm, setAgentSearchTerm] = useState('');
   const [selectedAgent, setSelectedAgent] = useState<TeamAgent | null>(null);
   const [activeTab, setActiveTab] = useState<'members' | 'agents'>('members');
 
-  const filteredMembers = teamData.members.filter(member =>
-    member.email.toLowerCase().includes(memberSearchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    const fetchTeamData = async () => {
+      if (teamId) {
+        try {
+          const team = await getTeamInfo(teamId);
+          if (team) {
+            setTeamData(team);
+            
+            // Fetch agents data
+            if (team.teamProjectsIds) {
+              const agentPromises = team.teamProjectsIds.map(async (projectId) => {
+                const projectDoc = await getDoc(doc(db, 'projects', projectId));
+                if (projectDoc.exists()) {
+                  return {
+                    projectId,
+                    ...projectDoc.data()
+                  } as TeamAgent;
+                }
+                return null;
+              });
 
-  const filteredAgents = teamData.agents.filter(agent =>
+              const agentsData = (await Promise.all(agentPromises)).filter((a): a is TeamAgent => a !== null);
+              setAgents(agentsData);
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching team data:', error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchTeamData();
+  }, [teamId]);
+
+  const filteredMembers = teamData?.teamEmails?.filter(email =>
+    email.toLowerCase().includes(memberSearchTerm.toLowerCase())
+  ) || [];
+
+  const filteredAgents = agents.filter(agent =>
     agent.projectName.toLowerCase().includes(agentSearchTerm.toLowerCase())
   );
 
   const handleAgentClick = (agent: TeamAgent) => {
     setSelectedAgent(agent);
   };
-
-  // Aquí irían los efectos para cargar los datos reales del equipo
-  useEffect(() => {
-    if (teamId) {
-      // Fetch team data
-    }
-  }, [teamId]);
 
   return (
     <div className="flex min-h-screen font-geist">
@@ -91,9 +96,8 @@ export default function TeamPlatform() {
         </div>
         <main className="p-8 mt-16">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-3xl font-semibold mb-8 font-poppins">{teamData.teamName}</h1>
+            <h1 className="text-3xl font-semibold mb-8 font-poppins">{teamData?.teamName || 'Team Platform'}</h1>
 
-            {/* Navigation Tabs */}
             <div className="flex gap-4 mb-8">
               <button
                 onClick={() => setActiveTab('members')}
@@ -117,17 +121,8 @@ export default function TeamPlatform() {
               </button>
             </div>
 
-            {/* Members Section */}
             {activeTab === 'members' && (
               <section>
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-medium">Members</h2>
-                  <button className="px-4 py-2 rounded-lg bg-white text-black hover:bg-white/90 transition-all duration-300 text-sm font-medium flex items-center gap-2">
-                    <IoAdd className="text-lg" />
-                    Add Member
-                  </button>
-                </div>
-
                 <div className="mb-4">
                   <div className="relative">
                     <IoSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
@@ -142,37 +137,34 @@ export default function TeamPlatform() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filteredMembers.map((member, index) => (
-                    <div
-                      key={index}
-                      className="p-4 rounded-lg bg-white/5 border border-white/10 flex items-center justify-between"
-                    >
-                      <div>
-                        <p className="text-sm text-white">{member.email}</p>
-                        <span className={`text-xs ${
-                          member.role === 'admin' ? 'text-blue-400' : 'text-gray-400'
-                        }`}>
-                          {member.role}
-                        </span>
+                {loading ? (
+                  <div className="flex items-center justify-center h-64">
+                    <div className="text-white/70">Loading...</div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {filteredMembers.map((email, index) => (
+                      <div
+                        key={index}
+                        className="p-4 rounded-lg bg-white/5 border border-white/10 flex items-center justify-between"
+                      >
+                        <div>
+                          <p className="text-sm text-white">{email}</p>
+                          <span className={`text-xs ${
+                            email === teamData?.teamAdminEmail ? 'text-blue-400' : 'text-gray-400'
+                          }`}>
+                            {email === teamData?.teamAdminEmail ? 'admin' : 'member'}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </section>
             )}
 
-            {/* Agents Section */}
             {activeTab === 'agents' && (
               <section>
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-medium">Agents</h2>
-                  <button className="px-4 py-2 rounded-lg bg-white text-black hover:bg-white/90 transition-all duration-300 text-sm font-medium flex items-center gap-2">
-                    <IoAdd className="text-lg" />
-                    Create Agent
-                  </button>
-                </div>
-
                 <div className="mb-4">
                   <div className="relative">
                     <IoSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
@@ -187,28 +179,33 @@ export default function TeamPlatform() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredAgents.map((agent) => (
-                    <AgentCard
-                      key={agent.projectId}
-                      name={agent.projectName}
-                      projectId={agent.projectId}
-                      created={agent.projectCreatedAt}
-                      status={agent.projectStatus}
-                      message={agent.projectMessage}
-                      progress={agent.projectLoading}
-                      projectTypeModel={agent.projectTypeModel}
-                      onClick={() => handleAgentClick(agent)}
-                    />
-                  ))}
-                </div>
+                {loading ? (
+                  <div className="flex items-center justify-center h-64">
+                    <div className="text-white/70">Loading...</div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredAgents.map((agent) => (
+                      <AgentCard
+                        key={agent.projectId}
+                        name={agent.projectName}
+                        projectId={agent.projectId}
+                        created={agent.projectCreatedAt}
+                        status={agent.projectStatus}
+                        message={agent.projectMessage}
+                        progress={agent.projectLoading}
+                        projectTypeModel={agent.projectTypeModel}
+                        onClick={() => handleAgentClick(agent)}
+                      />
+                    ))}
+                  </div>
+                )}
               </section>
             )}
           </div>
         </main>
       </div>
 
-      {/* Modal para detalles del agente */}
       {selectedAgent && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-[#1a1a1a] rounded-lg max-w-2xl w-full max-h-[90vh] border border-white/10 flex flex-col">

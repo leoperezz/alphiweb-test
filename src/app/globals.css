@@ -210,9 +210,11 @@ body {
 }
 
 @keyframes dots {
-  0%, 20% { content: '.'; }
-  40% { content: '..'; }
-  60%, 100% { content: '...'; }
+  0%, 20% { content: ''; }
+  40% { content: '.'; }
+  60% { content: '..'; }
+  80% { content: '...'; }
+  100% { content: ''; }
 }
 
 /* Estilo para el modal de carga */
@@ -675,9 +677,11 @@ body {
 }
 
 @keyframes dots {
-  0%, 20% { content: '.'; }
-  40% { content: '..'; }
-  60%, 100% { content: '...'; }
+  0%, 20% { content: ''; }
+  40% { content: '.'; }
+  60% { content: '..'; }
+  80% { content: '...'; }
+  100% { content: ''; }
 }
 
 /* Add a subtle shake animation for the delete button hover */

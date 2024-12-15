@@ -13,6 +13,9 @@ import { getGlobalProjects } from '../config/firestore';
 import FileRenderer from './components/FileRenderer';
 import { LuDatabaseZap } from 'react-icons/lu';
 import { PiGraph } from 'react-icons/pi';
+import ShareModal from './components/ShareModal';
+import { getAllUserTeams } from '../config/firestore';
+import { Team } from '../types/team';
 
 interface Project {
   projectName: string;
@@ -57,6 +60,9 @@ export default function Overview() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [fileSearchTerm, setFileSearchTerm] = useState('');
   const [isDeletingProject, setIsDeletingProject] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [sharingProject, setSharingProject] = useState<string | null>(null);
+  const [userTeams, setUserTeams] = useState<Team[]>([]);
 
   useEffect(() => {
     const fetchAllProjects = async () => {
@@ -96,6 +102,16 @@ export default function Overview() {
     };
 
     fetchAllProjects();
+  }, [user]);
+
+  useEffect(() => {
+    const loadUserTeams = async () => {
+      if (user) {
+        const teams = await getAllUserTeams(user.uid);
+        setUserTeams(teams);
+      }
+    };
+    loadUserTeams();
   }, [user]);
 
   const filteredProjects = projects.filter(project =>
@@ -265,6 +281,10 @@ export default function Overview() {
                     progress={project.projectLoading}
                     projectTypeModel={project.projectTypeModel}
                     onClick={() => handleProjectClick(project)}
+                    onShare={() => {
+                      setSharingProject(project.projectId);
+                      setIsShareModalOpen(true);
+                    }}
                   />
                 ))}
               </div>
@@ -372,6 +392,15 @@ export default function Overview() {
         </div>
       )}
       <DeletingModal />
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => {
+          setIsShareModalOpen(false);
+          setSharingProject(null);
+        }}
+        teams={userTeams}
+        projectId={sharingProject || ''}
+      />
     </div>
   );
 }

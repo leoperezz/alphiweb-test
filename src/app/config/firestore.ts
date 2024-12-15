@@ -1,5 +1,6 @@
 import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 import { app } from './firebase';
+import { Team } from '../types/team';
 
 const db = getFirestore(app);
 
@@ -79,6 +80,48 @@ export const getGlobalProjects = async () => {
     return (await Promise.all(projectPromises)).filter((p) => p !== null);
   } catch (error) {
     console.error('Error fetching global projects:', error);
+    return [];
+  }
+};
+
+
+export const getUserTeams = async (userId: string): Promise<string[]> => {
+  try {
+    const userDoc = await getDoc(doc(db, 'users', userId));
+    if (userDoc.exists()) {
+      return userDoc.data()?.userTeams || [];
+    }
+    return [];
+  } catch (error) {
+    console.error('Error getting user teams:', error);
+    return [];
+  }
+};
+
+export const getTeamInfo = async (teamId: string): Promise<Team | null> => {
+  try {
+    const teamDoc = await getDoc(doc(db, 'teams', teamId));
+    if (teamDoc.exists()) {
+      return {
+        teamId,
+        ...teamDoc.data()
+      } as Team;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error getting team info:', error);
+    return null;
+  }
+};
+
+export const getAllUserTeams = async (userId: string): Promise<Team[]> => {
+  try {
+    const teamIds = await getUserTeams(userId);
+    const teamsPromises = teamIds.map(teamId => getTeamInfo(teamId));
+    const teams = await Promise.all(teamsPromises);
+    return teams.filter((team): team is Team => team !== null);
+  } catch (error) {
+    console.error('Error getting all user teams:', error);
     return [];
   }
 };

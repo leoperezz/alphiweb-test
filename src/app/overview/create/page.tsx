@@ -480,7 +480,7 @@ export default function CreateAgent() {
                       >
                         <IoInformationCircle size={20} />
                       </button>
-                      <p className="text-center text-sm mt-2">$0.1 per 1k pages</p>
+                      <p className="text-center text-sm mt-2">$0.02 per 1k pages</p>
                     </div>
 
                     <div
@@ -499,7 +499,7 @@ export default function CreateAgent() {
                       >
                         <IoInformationCircle size={20} />
                       </button>
-                      <p className="text-center text-sm mt-2">$1 per 1k pages</p>
+                      <p className="text-center text-sm mt-2">$0.2 per 1k pages</p>
                     </div>
                   </div>
                 </div>

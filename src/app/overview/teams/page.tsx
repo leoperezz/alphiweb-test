@@ -1,58 +1,82 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import Sidebar from '../../components/Sidebar';
 import TeamCard from '../components/TeamCard';
-import { IoAdd, IoClose, IoSearch, IoPeople, IoMail, IoShield } from 'react-icons/io5';
+import { IoAdd, IoClose, IoSearch, IoPeople } from 'react-icons/io5';
 import Header from '../components/Header';
 import { useRouter } from 'next/navigation';
-
-interface Team {
-  teamName: string;
-  teamId: string;
-  teamDescription: string;
-  teamEmails: string[];
-  teamAdminEmail: string;
-}
-
-// Mock data
-const mockTeams: Team[] = [
-  {
-    teamName: "Development Team Alpha",
-    teamId: "team_001",
-    teamDescription: "Main development team focused on frontend and backend development of our core products.",
-    teamEmails: ["john.doe@company.com", "jane.smith@company.com", "bob.wilson@company.com"],
-    teamAdminEmail: "admin.alpha@company.com"
-  },
-  {
-    teamName: "Design Squad",
-    teamId: "team_002",
-    teamDescription: "Creative team responsible for UI/UX design and brand identity across all platforms.",
-    teamEmails: ["sarah.designer@company.com", "mike.artist@company.com"],
-    teamAdminEmail: "design.lead@company.com"
-  },
-  {
-    teamName: "AI Research Group",
-    teamId: "team_003",
-    teamDescription: "Specialized team working on artificial intelligence and machine learning implementations.",
-    teamEmails: ["ai.researcher1@company.com", "ml.expert@company.com", "data.scientist@company.com"],
-    teamAdminEmail: "ai.lead@company.com"
-  }
-];
+import { getAllUserTeams } from '../../config/firestore';
+import { Team } from '../../types/team';
 
 export default function Teams() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [emailSearchTerm, setEmailSearchTerm] = useState('');
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { user } = useAuth();
 
-  const filteredTeams = mockTeams.filter(team =>
-    team.teamName.toLowerCase().includes(searchTerm.toLowerCase())
+  useEffect(() => {
+    const fetchTeams = async () => {
+      if (user) {
+        try {
+          const userTeams = await getAllUserTeams(user.uid);
+          setTeams(userTeams);
+        } catch (error) {
+          console.error('Error fetching teams:', error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchTeams();
+  }, [user]);
+
+  const filteredTeams = useMemo(() => 
+    teams.filter(team =>
+      team.teamName.toLowerCase().includes(searchTerm.toLowerCase())
+    ), [teams, searchTerm]
   );
 
-  const filteredEmails = selectedTeam?.teamEmails.filter(email =>
-    email.toLowerCase().includes(emailSearchTerm.toLowerCase())
-  ) || [];
+  const handlePlatformClick = (teamId: string) => {
+    router.push(`/overview/teams/platform?teamId=${teamId}`);
+  };
+
+  const renderTeamsList = () => {
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center h-64">
+          <div className="text-white/70">Loading...</div>
+        </div>
+      );
+    }
+
+    if (filteredTeams.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center h-64 text-white/70">
+          <IoPeople className="text-6xl mb-4 text-white/20" />
+          <p className="text-xl mb-2">No teams found</p>
+          <p className="text-sm">Create a team to get started</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredTeams.map((team) => (
+          <TeamCard
+            key={team.teamId}
+            {...team}
+            onClick={() => setSelectedTeam(team)}
+          />
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="flex min-h-screen font-geist">
@@ -84,83 +108,11 @@ export default function Teams() {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredTeams.map((team) => (
-                <div
-                  key={team.teamId}
-                  onClick={() => setSelectedTeam(team)}
-                  className="group p-6 rounded-lg bg-white/5 border border-white/10 hover:border-white/30 
-                             transition-all duration-300 cursor-pointer space-y-4"
-                >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="text-lg font-medium mb-1 group-hover:text-white transition-colors">
-                        {team.teamName}
-                      </h3>
-                      <p className="text-sm text-white/50 font-mono">{team.teamId}</p>
-                    </div>
-                    <div className="flex items-center gap-2 bg-white/5 px-2 py-1 rounded">
-                      <IoPeople className="text-blue-400" />
-                      <span className="text-sm text-white/70">{team.teamEmails.length}</span>
-                    </div>
-                  </div>
-
-                  <p className="text-sm text-white/70 line-clamp-2">
-                    {team.teamDescription}
-                  </p>
-
-                  <div className="pt-4 border-t border-white/5">
-                    <div className="flex items-center gap-2 text-sm text-white/50">
-                      <IoShield className="text-emerald-400" />
-                      <span className="text-white/70">Admin:</span>
-                      <span className="text-white/90 truncate flex-1">
-                        {team.teamAdminEmail}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="text-xs text-white/50 flex items-center gap-1">
-                      <IoMail className="text-blue-400" />
-                      <span>Recent members:</span>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {team.teamEmails.slice(0, 2).map((email, index) => (
-                        <span
-                          key={index}
-                          className="text-xs bg-white/5 px-2 py-1 rounded-full text-white/70"
-                        >
-                          {email}
-                        </span>
-                      ))}
-                      {team.teamEmails.length > 2 && (
-                        <span className="text-xs bg-white/5 px-2 py-1 rounded-full text-white/70">
-                          +{team.teamEmails.length - 2} more
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="pt-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(`/overview/teams/platform?teamId=${team.teamId}`);
-                      }}
-                      className="w-full px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 
-                                 text-white text-sm font-medium transition-all duration-300"
-                    >
-                      View Platform
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+            {renderTeamsList()}
           </div>
         </main>
       </div>
 
-      {/* Modal for team details */}
       {selectedTeam && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-[#1a1a1a] rounded-lg max-w-2xl w-full max-h-[90vh] border border-white/10 flex flex-col">
@@ -193,7 +145,7 @@ export default function Teams() {
                 <div className="flex items-center gap-2 mb-4">
                   <h3 className="text-white/50 text-sm">Team Members</h3>
                   <span className="text-xs bg-white/10 px-2 py-0.5 rounded-full">
-                    {selectedTeam.teamEmails.length}
+                    {selectedTeam.teamEmails?.length || 0}
                   </span>
                 </div>
                 
@@ -210,9 +162,9 @@ export default function Teams() {
                 </div>
 
                 <div className="max-h-48 overflow-y-auto modal-scroll space-y-2">
-                  {filteredEmails.map((email, index) => (
+                  {selectedTeam.teamEmails?.map((email) => (
                     <div 
-                      key={index}
+                      key={`email-${email}`}
                       className="p-2 rounded-lg bg-white/5 border border-white/10"
                     >
                       {email}
@@ -224,7 +176,7 @@ export default function Teams() {
 
             <div className="p-6 border-t border-white/10 flex justify-end gap-3 mt-auto sticky bottom-0 bg-[#1a1a1a]">
               <button
-                onClick={() => router.push(`/overview/teams/platform?teamId=${selectedTeam.teamId}`)}
+                onClick={() => handlePlatformClick(selectedTeam.teamId)}
                 className="px-4 py-2 rounded-lg bg-white text-black hover:bg-white/90 transition-all duration-300 text-sm flex items-center gap-2"
               >
                 Platform
