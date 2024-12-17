@@ -1212,3 +1212,83 @@ html {
 .source-document:hover .icon {
   @apply transform scale-110;
 }
+
+/* Añadir estilos para los contenedores de agentes */
+.agent-container {
+  @apply p-4 rounded-lg border border-white/10 hover:border-white/30 
+         cursor-pointer transition-all;
+}
+
+.agent-container.selected {
+  @apply bg-white/5;
+}
+
+/* Estilos para el scrollbar del contenedor de agentes */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Experimental badge */
+.experimental-badge {
+  @apply px-2 py-1 text-xs font-medium text-blue-400 bg-blue-500/20 border border-blue-500/30;
+  animation: neonPulse 2s infinite;
+}
+
+@keyframes neonPulse {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.5),
+                0 0 10px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.7),
+                0 0 20px rgba(59, 130, 246, 0.5);
+  }
+}
+
+/* Progress bar styles */
+.progress-bar-container {
+  @apply h-2 bg-white/10;
+}
+
+.progress-bar {
+  @apply h-full transition-all duration-500;
+}
+
+.progress-bar-blue {
+  @apply bg-blue-500/50;
+}
+
+.progress-bar-green {
+  @apply bg-emerald-500/50;
+}
+
+/* Status badge styles */
+.status-badge {
+  @apply px-2 py-0.5 text-xs font-medium;
+}
+
+.status-badge-progress {
+  @apply text-blue-400 bg-blue-500/20;
+}
+
+.status-badge-completed {
+  @apply text-emerald-400 bg-emerald-500/20;
+}

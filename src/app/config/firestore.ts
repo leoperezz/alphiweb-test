@@ -156,4 +156,66 @@ export const getUserApiKeys = async (userId: string): Promise<string[]> => {
   }
 };
 
+interface JobSection {
+  content: string;
+  number: string;
+  title: string;
+}
+
+export interface Job {
+  jobId: string;
+  jobName: string;
+  jobDescription: string;
+  jobSections: JobSection[];
+  jobStatus: string;
+  jobTotalSections: number;
+  jobActualSections: number;
+}
+
+export const getUserJobs = async (userId: string): Promise<Job[]> => {
+  try {
+    // Primero verificamos si el usuario existe y tiene jobs
+    const userDoc = await getDoc(doc(db, 'users', userId));
+    if (!userDoc.exists()) {
+      console.error('User document does not exist');
+      return [];
+    }
+
+    const jobIds = userDoc.data()?.userJobsIds || [];
+    if (!jobIds.length) {
+      return [];
+    }
+
+    const jobPromises = jobIds.map(async (jobId: string) => {
+      try {
+        const jobDoc = await getDoc(doc(db, 'superinference', jobId));
+        if (!jobDoc.exists()) {
+          console.warn(`Job ${jobId} not found`);
+          return null;
+        }
+
+        const data = jobDoc.data();
+        return {
+          jobId,
+          jobName: data.jobName || '',
+          jobDescription: data.jobDescription || '',
+          jobSections: data.jobSections || [],
+          jobStatus: data.jobStatus || 'pending',
+          jobTotalSections: data.jobTotalSections || 0,
+          jobActualSections: data.jobActualSections || 0
+        };
+      } catch (error) {
+        console.error(`Error fetching job ${jobId}:`, error);
+        return null;
+      }
+    });
+
+    const jobs = await Promise.all(jobPromises);
+    return jobs.filter((j): j is Job => j !== null);
+  } catch (error) {
+    console.error('Error fetching user jobs:', error);
+    return [];
+  }
+};
+
 export { db };

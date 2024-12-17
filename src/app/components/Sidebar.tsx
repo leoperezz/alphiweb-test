@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { FiUsers, FiSettings } from 'react-icons/fi';
 import { VscDiffAdded } from "react-icons/vsc";
-import { IoLogOutOutline } from 'react-icons/io5';
+import { IoLogOutOutline, IoFlashOutline } from 'react-icons/io5';
 import { RiRobot2Line } from "react-icons/ri";
 import { useAuth } from '../context/AuthContext';
 
@@ -44,6 +44,11 @@ export default function Sidebar() {
         <Link href="/overview/teams" className="flex items-center gap-3 px-6 py-2.5 text-white/70 hover:text-white hover:bg-white/5">
           <FiUsers className="text-lg" />
           <span>Teams</span>
+        </Link>
+        
+        <Link href="/overview/superinference" className="flex items-center gap-3 px-6 py-2.5 text-white/70 hover:text-white hover:bg-white/5">
+          <IoFlashOutline className="text-lg" />
+          <span>Super Inference</span>
         </Link>
         
         <Link href="/overview/settings" className="flex items-center gap-3 px-6 py-2.5 text-white/70 hover:text-white hover:bg-white/5">
