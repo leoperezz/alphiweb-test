@@ -1,4 +1,4 @@
-import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from 'firebase/firestore';
 import { app } from './firebase';
 import { Team } from '../types/team';
 
@@ -101,11 +101,27 @@ export const getUserTeams = async (userId: string): Promise<string[]> => {
 export const getTeamInfo = async (teamId: string): Promise<Team | null> => {
   try {
     const teamDoc = await getDoc(doc(db, 'teams', teamId));
+    
     if (teamDoc.exists()) {
-      return {
+      const teamData = teamDoc.data();
+      
+      // Obtenemos el array de emails y proyectos
+      const emails = teamData.teamUsersEmails || [];
+      const projectsIds = teamData.teamProjectsId || [];
+      
+      const team: Team = {
         teamId,
-        ...teamDoc.data()
-      } as Team;
+        teamName: teamData.teamName || '',
+        teamDescription: teamData.teamDescription || '',
+        teamAdminEmail: teamData.teamAdminEmail || '',
+        teamAdminId: teamData.teamAdminId || '',
+        teamProjectsIds: projectsIds,
+        teamEmails: emails,
+        teamUsersCount: emails.length,
+        teamProjectsCount: projectsIds.length
+      };
+
+      return team;
     }
     return null;
   } catch (error) {
@@ -122,6 +138,20 @@ export const getAllUserTeams = async (userId: string): Promise<Team[]> => {
     return teams.filter((team): team is Team => team !== null);
   } catch (error) {
     console.error('Error getting all user teams:', error);
+    return [];
+  }
+};
+
+export const getUserApiKeys = async (userId: string): Promise<string[]> => {
+  try {
+    const docRef = doc(db, 'users', userId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return docSnap.data()?.userApiKeys || [];
+    }
+    return [];
+  } catch (error) {
+    console.error('Error getting API keys:', error);
     return [];
   }
 };

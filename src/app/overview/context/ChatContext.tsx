@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
-import { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
 interface Message {
@@ -15,15 +15,11 @@ interface Message {
 
 interface Document {
   name_doc: string;
-  pages: number[];
-  text: string;
   score: number;
 }
 
 interface DocumentResponse {
   name_doc: string;
-  pages: number | number[];
-  text: string;
   score: number;
 }
 
@@ -32,8 +28,6 @@ interface ChatContextType {
   documents: Document[];
   isLoading: boolean;
   sendMessage: (message: string) => void;
-  isSidebarOpen: boolean;
-  setIsSidebarOpen: (open: boolean) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -42,7 +36,6 @@ export function ChatProvider({ children, projectId }: { children: React.ReactNod
   const [messages, setMessages] = useState<Message[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { user } = useAuth();
 
   const sendMessage = async (text: string) => {
@@ -135,22 +128,21 @@ export function ChatProvider({ children, projectId }: { children: React.ReactNod
               case 'documents':
                 if (Array.isArray(data.content)) {
                   console.log('Documentos recibidos del stream:', data.content);
-                  const docs = data.content.map((doc: DocumentResponse) => {
-                    console.log('Procesando documento:', doc);
-                    return {
-                      name_doc: doc.name_doc,
-                      pages: Array.isArray(doc.pages) ? doc.pages : [doc.pages],
-                      text: doc.text,
-                      score: doc.score
-                    };
+                  const newDocs = data.content.map((doc: DocumentResponse) => ({
+                    name_doc: doc.name_doc,
+                    score: doc.score
+                  }));
+                  
+                  setDocuments(prev => {
+                    const uniqueDocs = new Map();
+                    [...prev, ...newDocs].forEach(doc => {
+                      if (!uniqueDocs.has(doc.name_doc) || 
+                          uniqueDocs.get(doc.name_doc).score < doc.score) {
+                        uniqueDocs.set(doc.name_doc, doc);
+                      }
+                    });
+                    return Array.from(uniqueDocs.values());
                   });
-                  //console.log('Documentos procesados:', docs);
-                  setDocuments(docs);
-                  setIsSidebarOpen(true);
-                  //console.log('Estado después de actualizar documentos:', {
-                  //  documentsLength: docs.length,
-                  //  isSidebarOpen
-                  //});
                 }
                 break;
             }
@@ -171,9 +163,7 @@ export function ChatProvider({ children, projectId }: { children: React.ReactNod
       messages,
       documents,
       isLoading,
-      sendMessage,
-      isSidebarOpen,
-      setIsSidebarOpen
+      sendMessage
     }}>
       {children}
     </ChatContext.Provider>

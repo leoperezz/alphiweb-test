@@ -3,6 +3,7 @@
 import { Team } from '../../types/team';
 import { IoPeople, IoMail, IoShield, IoFolder } from 'react-icons/io5';
 import { RiRobot2Line } from 'react-icons/ri';
+import { useEffect } from 'react';
 
 type TeamCardProps = Team & {
   onClick: () => void;
@@ -12,13 +13,19 @@ export default function TeamCard({
   teamId,
   teamName, 
   teamDescription, 
-  teamEmails = [], 
+  teamEmails, 
   teamAdminEmail,
-  teamProjectsIds = [], 
+  teamProjectsIds,
+  teamUsersCount,
+  teamProjectsCount,
   onClick 
 }: TeamCardProps) {
-  const emails = Array.isArray(teamEmails) ? teamEmails : [];
-  const projects = Array.isArray(teamProjectsIds) ? teamProjectsIds : [];
+  useEffect(() => {
+    console.log(`TeamCard ${teamId} rendered with:`, {
+      teamUsersCount,
+      teamEmails
+    });
+  }, [teamId, teamUsersCount, teamEmails]);
 
   return (
     <div 
@@ -49,11 +56,11 @@ export default function TeamCard({
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center gap-2 text-white/50">
               <IoPeople className="text-lg" />
-              <span className="text-sm">{emails.length} members</span>
+              <span className="text-sm">{teamUsersCount} members</span>
             </div>
             <div className="flex items-center gap-2 text-white/50">
               <RiRobot2Line className="text-lg" />
-              <span className="text-sm">{projects.length} agents</span>
+              <span className="text-sm">{teamProjectsCount} agents</span>
             </div>
           </div>
           <div className="mt-3 flex items-center gap-2 text-white/50">

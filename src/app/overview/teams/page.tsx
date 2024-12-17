@@ -24,6 +24,7 @@ export default function Teams() {
       if (user) {
         try {
           const userTeams = await getAllUserTeams(user.uid);
+          console.log('Fetched teams:', userTeams);
           setTeams(userTeams);
         } catch (error) {
           console.error('Error fetching teams:', error);
@@ -145,7 +146,7 @@ export default function Teams() {
                 <div className="flex items-center gap-2 mb-4">
                   <h3 className="text-white/50 text-sm">Team Members</h3>
                   <span className="text-xs bg-white/10 px-2 py-0.5 rounded-full">
-                    {selectedTeam.teamEmails?.length || 0}
+                    {selectedTeam.teamUsersCount || 0}
                   </span>
                 </div>
                 
@@ -162,13 +163,15 @@ export default function Teams() {
                 </div>
 
                 <div className="max-h-48 overflow-y-auto modal-scroll space-y-2">
-                  {selectedTeam.teamEmails?.map((email) => (
-                    <div 
-                      key={`email-${email}`}
-                      className="p-2 rounded-lg bg-white/5 border border-white/10"
-                    >
-                      {email}
-                    </div>
+                  {selectedTeam.teamEmails
+                    ?.filter(email => email.toLowerCase().includes(emailSearchTerm.toLowerCase()))
+                    .map((email) => (
+                      <div 
+                        key={`email-${email}`}
+                        className="p-2 rounded-lg bg-white/5 border border-white/10"
+                      >
+                        {email}
+                      </div>
                   ))}
                 </div>
               </div>

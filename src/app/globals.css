@@ -1122,3 +1122,93 @@ html {
 .cta-section.is-visible::before {
   opacity: 1;
 }
+
+.coming-soon-model {
+  position: relative;
+  cursor: not-allowed;
+  opacity: 0.8;
+  overflow: hidden;
+}
+
+.coming-soon-model::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.coming-soon-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: linear-gradient(45deg, #FF8C00, #FF0080);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 0 0.75rem 0 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  z-index: 2;
+  animation: pulseSoon 2s infinite;
+}
+
+@keyframes pulseSoon {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(0.95);
+  }
+}
+
+.coming-soon-model:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.coming-soon-model * {
+  pointer-events: none;
+}
+
+.coming-soon-model .info-button {
+  pointer-events: auto;
+}
+
+/* Agregar al final del archivo */
+.document-item {
+  @apply bg-zinc-800/30 rounded-lg border border-white/10 
+         hover:border-white/20 transition-all duration-200 cursor-pointer;
+}
+
+.document-item:hover {
+  @apply bg-zinc-800/50 transform scale-[1.02];
+}
+
+.document-item .icon {
+  @apply transition-transform duration-200;
+}
+
+.document-item:hover .icon {
+  @apply transform scale-110;
+}
+
+/* Add these styles */
+.source-document {
+  @apply bg-zinc-800/30 rounded-lg px-3 py-2 
+         border border-white/10 hover:border-white/20 
+         transition-all duration-200;
+}
+
+.source-document:hover {
+  @apply bg-zinc-800/50 transform scale-[1.02];
+}
+
+.source-document .icon {
+  @apply transition-transform duration-200;
+}
+
+.source-document:hover .icon {
+  @apply transform scale-110;
+}

@@ -484,11 +484,11 @@ export default function CreateAgent() {
                     </div>
 
                     <div
-                      className={`model-container ${selectedModel === 'lightrag' ? 'selected' : ''}`}
-                      onClick={() => handleModelSelect('lightrag')}
+                      className={`model-container ${selectedModel === 'lightrag' ? 'selected' : ''} coming-soon-model`}
                     >
-                      <h3 className="text-center">Advanced</h3>
-                      <PiGraph className="mx-auto text-4xl mb-2" />
+                      <div className="coming-soon-badge">Soon</div>
+                      <h3 className="text-center opacity-50">Advanced</h3>
+                      <PiGraph className="mx-auto text-4xl mb-2 opacity-50" />
                       <button 
                         className="info-button absolute top-2 right-2" 
                         onClick={(e) => {
@@ -499,7 +499,7 @@ export default function CreateAgent() {
                       >
                         <IoInformationCircle size={20} />
                       </button>
-                      <p className="text-center text-sm mt-2">$0.2 per 1k pages</p>
+                      <p className="text-center text-sm mt-2 opacity-50">$0.2 per 1k pages</p>
                     </div>
                   </div>
                 </div>

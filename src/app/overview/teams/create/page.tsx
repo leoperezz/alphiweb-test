@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../../../components/Sidebar';
-import { IoClose, IoArrowForward } from 'react-icons/io5';
+import { IoClose, IoArrowForward, IoInformationCircle } from 'react-icons/io5';
 import Header from '../../components/Header';
 
 export default function CreateTeam() {
@@ -63,11 +63,6 @@ export default function CreateTeam() {
     const validEmails = emailFields
       .map(field => field.value.trim())
       .filter(email => email && isValidEmail(email));
-
-    if (validEmails.length === 0) {
-      setError("At least one valid email is required");
-      return;
-    }
 
     setIsUploading(true);
 
@@ -197,7 +192,18 @@ export default function CreateTeam() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Add Members</label>
+                  <label className="block text-sm font-medium mb-2 flex items-center gap-2">
+                    Add Members
+                    <div className="relative group">
+                      <IoInformationCircle 
+                        className="text-gray-400 hover:text-white cursor-help" 
+                        size={16}
+                      />
+                      <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 px-3 py-2 bg-gray-800 rounded-lg text-xs whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                        Only emails with an Alphi account will be added
+                      </div>
+                    </div>
+                  </label>
                   <div className="space-y-3">
                     {emailFields.map((field, index) => (
                       <div key={field.id} className="flex gap-2 items-center">

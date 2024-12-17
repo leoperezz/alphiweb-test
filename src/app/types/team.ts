@@ -7,4 +7,6 @@ export interface Team {
     teamEmails: string[];
     teamProjectsIds?: string[];
     teamUsersIds?: string[];
+    teamUsersCount: number;
+    teamProjectsCount: number;
   }
