@@ -545,7 +545,10 @@ export default function CreateAgent() {
 
               <button
                 type="submit"
-                className="w-full px-4 py-2 rounded-lg bg-white text-black hover:bg-white/90 transition-all duration-300 text-sm font-medium"
+                className="w-full px-4 py-2 rounded-lg bg-white/50 text-black/50 transition-all duration-300 
+                text-sm font-medium cursor-not-allowed hover:bg-white/40"
+                disabled={true}
+                title="Feature coming soon! We're working hard to bring you the best experience :)"
               >
                 Create Assistant
               </button>

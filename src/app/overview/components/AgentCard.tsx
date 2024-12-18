@@ -4,7 +4,7 @@
 import FileRenderer from './FileRenderer';
 import { LuDatabaseZap } from 'react-icons/lu';
 import { PiGraph } from 'react-icons/pi';
-import { IoShareSocial } from 'react-icons/io5';
+import { IoShareSocial, IoClose } from 'react-icons/io5';
 
 interface AgentCardProps {
   name: string;
@@ -63,7 +63,9 @@ export default function AgentCard({ name, projectId, created, status, message, p
           onShare?.();
         }}
         className="absolute top-4 right-4 p-2 rounded-lg bg-white/5 hover:bg-white/10 
-        transition-colors text-white/50 hover:text-white"
+        transition-colors text-white/50 hover:text-white cursor-not-allowed opacity-50"
+        disabled={true}
+        title="Coming soon :)"
       >
         <IoShareSocial className="text-lg" />
       </button>
@@ -117,12 +119,26 @@ export default function AgentCard({ name, projectId, created, status, message, p
         <div className="mt-4 space-y-2 max-h-[150px] overflow-y-auto custom-scrollbar">
           <p className="text-white/70 text-sm mb-2">Files:</p>
           {files.slice(0, 3).map((file, index) => (
-            <FileRenderer 
+            <div 
               key={index}
-              fileName={file.name}
-              size={file.size}
-              showSize={true}
-            />
+              className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors group"
+            >
+              <FileRenderer 
+                fileName={file.name}
+                size={file.size}
+                showSize={true}
+              />
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+                className="text-gray-400 opacity-50 cursor-not-allowed"
+                disabled={true}
+                title="Delete feature coming soon :)"
+              >
+                <IoClose size={20} />
+              </button>
+            </div>
           ))}
           {files.length > 3 && (
             <p className="text-xs text-white/50">

@@ -208,8 +208,10 @@ export default function Overview() {
       <>
         <button 
           onClick={handleDeleteProject}
-          className="px-4 py-2 rounded-lg border border-red-500/50 text-red-500 
-          hover:bg-red-500/10 transition-all duration-300 text-sm flex items-center gap-2"
+          className="px-4 py-2 rounded-lg border border-red-500/50 text-red-500/50 
+          hover:bg-red-500/10 transition-all duration-300 text-sm flex items-center gap-2 cursor-not-allowed"
+          disabled={true}
+          title="Delete feature coming soon! We're working hard to bring you the best experience :)"
         >
           <IoTrash />
           Delete
