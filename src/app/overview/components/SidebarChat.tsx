@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { IoClose, IoSearch, IoCode, IoText, IoImage, IoDocument } from 'react-icons/io5';
 
 interface Document {

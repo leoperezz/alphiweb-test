@@ -1,7 +1,7 @@
 'use client'
 
 import { Team } from '../../types/team';
-import { IoPeople, IoMail, IoShield, IoFolder } from 'react-icons/io5';
+import { IoPeople, IoMail, IoShield } from 'react-icons/io5';
 import { RiRobot2Line } from 'react-icons/ri';
 import { useEffect } from 'react';
 
@@ -15,7 +15,6 @@ export default function TeamCard({
   teamDescription, 
   teamEmails, 
   teamAdminEmail,
-  teamProjectsIds,
   teamUsersCount,
   teamProjectsCount,
   onClick 

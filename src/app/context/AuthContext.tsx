@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       formData.append('userName', user.displayName || '');
       formData.append('userEmail', user.email || '');
 
-      const endpoint = `${process.env.NEXT_PUBLIC_ENDPOINT_API}/new_user`;
+      const endpoint = `${process.env.NEXT_PUBLIC_ENDPOINT_API}/new_user_demo`;
       console.log('Endpoint URL:', endpoint);
 
       const response = await fetch(endpoint, {

@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { getLlamaCloudKey } from '../../config/firestore';
 import Sidebar from '../../components/Sidebar';
 import { IoCloudUpload, IoInformationCircle, IoClose, IoArrowForward } from 'react-icons/io5';
-import { FiFile } from 'react-icons/fi';
 import Header from '../components/Header';
 import { LuDatabaseZap } from 'react-icons/lu';
 import { PiGraph } from 'react-icons/pi';
@@ -25,7 +24,6 @@ export default function CreateAgent() {
   });
   const [showPreview, setShowPreview] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [llamaKeyValid, setLlamaKeyValid] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedModel, setSelectedModel] = useState<'basic' | 'lightrag'>('basic');
   const [infoModalVisible, setInfoModalVisible] = useState(false);
@@ -35,8 +33,7 @@ export default function CreateAgent() {
   useEffect(() => {
     const checkLlamaKey = async () => {
       if (user) {
-        const key = await getLlamaCloudKey(user.uid);
-        setLlamaKeyValid(key.startsWith('llx-'));
+        await getLlamaCloudKey(user.uid);
       }
     };
     checkLlamaKey();
@@ -296,11 +293,6 @@ export default function CreateAgent() {
     );
   };
 
-  const handleInfoClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
   const showInfoModal = (content: string) => {
     setInfoModalContent(content);
     setInfoModalVisible(true);
@@ -383,7 +375,7 @@ export default function CreateAgent() {
         </div>
         <main className="p-8 mt-16">
           <div className="max-w-3xl mx-auto">
-            <h1 className="text-3xl font-semibold mb-8 font-poppins">Create your agent</h1>
+            <h1 className="text-3xl font-semibold mb-8 font-poppins">Create your assistant</h1>
 
             {/* Info Card */}
             <div className="bg-white/5 border border-white/10 rounded-lg p-4 mb-8">
@@ -555,7 +547,7 @@ export default function CreateAgent() {
                 type="submit"
                 className="w-full px-4 py-2 rounded-lg bg-white text-black hover:bg-white/90 transition-all duration-300 text-sm font-medium"
               >
-                Create Agent
+                Create Assistant
               </button>
             </form>
           </div>

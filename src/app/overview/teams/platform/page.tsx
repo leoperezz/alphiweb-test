@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Sidebar from '../../../components/Sidebar';
 import Header from '../../components/Header';
-import { IoAdd, IoSearch, IoClose, IoChatbubbles } from 'react-icons/io5';
+import { IoSearch, IoClose, IoChatbubbles } from 'react-icons/io5';
 import AgentCard from '../../components/AgentCard';
 import { getTeamInfo } from '../../../config/firestore';
 import { Team } from '../../../types/team';
@@ -117,7 +117,7 @@ export default function TeamPlatform() {
                     : 'text-white/50 hover:text-white hover:bg-white/5'
                 }`}
               >
-                Agents
+                Assistants
               </button>
             </div>
 

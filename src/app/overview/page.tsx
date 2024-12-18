@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import AgentCard from './components/AgentCard';
 import { useRouter } from 'next/navigation';
-import { IoAdd, IoClose, IoSearch, IoDocument, IoTrash, IoPencil, IoChatbubbles } from 'react-icons/io5';
+import { IoAdd, IoClose, IoSearch, IoTrash, IoPencil, IoChatbubbles } from 'react-icons/io5';
 import Header from './components/Header';
 import { useAuth } from '../context/AuthContext';
 import { doc, getDoc } from 'firebase/firestore';
@@ -245,12 +245,12 @@ export default function Overview() {
         </div>
         <main className="p-8 mt-16">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-3xl font-semibold mb-8 font-poppins">Agents</h1>
+            <h1 className="text-3xl font-semibold mb-8 font-poppins">Assistants</h1>
             
             <div className="mb-6 flex gap-4 items-center">
               <input
                 type="text"
-                placeholder="Search agents..."
+                placeholder="Search assistants..."
                 className="flex-1 px-4 py-2 rounded-lg bg-white/5 border border-white/10 transition-all duration-300 hover:border-white/30 focus:border-white/30 focus:outline-none"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}

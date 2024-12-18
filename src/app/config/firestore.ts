@@ -1,4 +1,4 @@
-import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 import { app } from './firebase';
 import { Team } from '../types/team';
 

@@ -22,9 +22,6 @@ export default function Header() {
 
         {/* Navigation links */}
         <nav className="flex gap-8 items-center font-geist">
-          <Link href="/" className="nav-link">Home</Link>
-          <Link href="/docs" className="nav-link">Docs</Link>
-          <Link href="/pricing" className="nav-link">Pricing</Link>
         </nav>
 
         {/* Connect button */}

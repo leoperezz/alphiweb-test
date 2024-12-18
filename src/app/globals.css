@@ -801,10 +801,51 @@ button:has(.IoTrash):hover {
 }
 
 .feature-card-new {
-  @apply bg-black border border-zinc-800 p-8 rounded-xl
-         transition-all duration-500 hover:border-[#D57EEB]/30
-         transform opacity-0 translate-y-10;
-  backdrop-filter: none;
+  @apply bg-black p-8 border border-white/10 hover:border-white/20 
+         transition-all duration-300 rounded-lg relative;
+}
+
+.feature-card-new:hover {
+  transform: translateY(-5px);
+}
+
+.feature-card-new:hover h3 {
+  @apply bg-gradient-to-r from-[#ee0979] to-[#ff6a00] bg-clip-text text-transparent;
+}
+
+.feature-icon {
+  @apply text-white transition-all duration-300;
+}
+
+.feature-card-new:hover .feature-icon {
+  background: linear-gradient(45deg, #ee0979, #ff6a00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transform: scale(1.1);
+}
+
+.feature-card-new {
+  @apply bg-black p-8 border border-white/10 hover:border-white/20 
+         transition-all duration-300 rounded-lg relative;
+}
+
+.feature-card-new:hover {
+  transform: translateY(-5px);
+}
+
+.feature-card-new:hover h3 {
+  @apply bg-gradient-to-r from-[#ee0979] to-[#ff6a00] bg-clip-text text-transparent;
+}
+
+.feature-icon {
+  @apply text-white transition-all duration-300;
+}
+
+.feature-card-new:hover .feature-icon {
+  background: linear-gradient(45deg, #ee0979, #ff6a00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transform: scale(1.1);
 }
 
 .feature-card-new.visible {
@@ -812,25 +853,17 @@ button:has(.IoTrash):hover {
 }
 
 .feature-card-new:hover {
-  box-shadow: 0 25px 50px -12px rgba(213, 126, 235, 0.25);
-  transform: translateY(-10px);
+  box-shadow: none;
+  @apply border-white/20;
 }
 
 .feature-icon {
-  @apply text-[#FCCB90] transition-all duration-300;
-  filter: drop-shadow(0 0 8px rgba(252, 203, 144, 0.3));
-}
-
-.feature-card-new:hover .feature-icon {
-  @apply text-[#D57EEB];
-  transform: scale(1.1) translateY(-5px);
-  filter: drop-shadow(0 0 12px rgba(213, 126, 235, 0.4));
+  @apply text-white;
 }
 
 .use-case-card {
-  @apply relative overflow-hidden bg-black opacity-0;
-  transform: translateX(-20px);
-  transition: all 0.5s ease-out;
+  @apply bg-black border border-white/10 p-8 rounded-xl
+         transition-all duration-500 hover:border-white/20;
 }
 
 .use-case-card.visible {
@@ -840,7 +873,8 @@ button:has(.IoTrash):hover {
 
 .use-case-card:hover {
   transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 10px 20px rgba(213, 126, 235, 0.1);
+  box-shadow: none;
+  @apply border-white/20;
 }
 
 .benefit-item {
@@ -1048,10 +1082,9 @@ html {
 
 /* Feature Cards */
 .feature-card-new {
-  @apply bg-black border border-zinc-800 p-8 rounded-xl
-         transition-all duration-500 hover:border-[#D57EEB]/30
+  @apply bg-black border border-white/10 p-8 rounded-xl
+         transition-all duration-500 hover:border-white/20
          transform opacity-0 translate-y-10;
-  backdrop-filter: none;
 }
 
 .feature-card-new.visible {
@@ -1060,9 +1093,8 @@ html {
 
 /* Use Cases */
 .use-case-card {
-  @apply relative overflow-hidden bg-black opacity-0;
-  transform: translateX(-20px);
-  transition: all 0.5s ease-out;
+  @apply bg-black border border-white/10 p-8 rounded-xl
+         transition-all duration-500 hover:border-white/20;
 }
 
 .use-case-card.visible {
@@ -1072,7 +1104,8 @@ html {
 
 .use-case-card:hover {
   transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 10px 20px rgba(213, 126, 235, 0.1);
+  box-shadow: none;
+  @apply border-white/20;
 }
 
 /* Benefits */
@@ -1094,15 +1127,10 @@ html {
 
 /* Iconos con efectos mejorados */
 .feature-icon {
-  @apply text-[#FCCB90] transition-all duration-300;
-  filter: drop-shadow(0 0 8px rgba(252, 203, 144, 0.3));
+  @apply text-white;
 }
 
-.feature-card-new:hover .feature-icon {
-  @apply text-[#D57EEB];
-  transform: scale(1.1) translateY(-5px) rotate(5deg);
-  filter: drop-shadow(0 0 12px rgba(213, 126, 235, 0.4));
-}
+
 
 /* CTA Section */
 .cta-section {
@@ -1176,7 +1204,7 @@ html {
   pointer-events: auto;
 }
 
-/* Agregar al final del archivo */
+/* Add these styles */
 .document-item {
   @apply bg-zinc-800/30 rounded-lg border border-white/10 
          hover:border-white/20 transition-all duration-200 cursor-pointer;
@@ -1291,4 +1319,355 @@ html {
 
 .status-badge-completed {
   @apply text-emerald-400 bg-emerald-500/20;
+}
+
+/* Actualizar/agregar estos estilos */
+
+/* Remover gradientes */
+.bg-gradient-to-r {
+  background: white;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  color: inherit;
+}
+
+/* Actualizar cards */
+.feature-card-new {
+  @apply bg-black border border-white/10 p-8 rounded-xl
+         transition-all duration-500 hover:border-white/20
+         transform opacity-0 translate-y-10;
+}
+
+.use-case-card {
+  @apply bg-black border border-white/10 p-8 rounded-xl
+         transition-all duration-500 hover:border-white/20;
+}
+
+/* Actualizar botones */
+button {
+  @apply rounded-full;
+}
+
+/* Actualizar tamaños de texto consistentes */
+section h2 {
+  @apply text-5xl md:text-6xl font-light text-white;
+}
+
+section h3 {
+  @apply text-2xl font-light text-white;
+}
+
+/* Remover efectos de gradiente */
+.gradient-active,
+.bg-gradient-to-r,
+.bg-gradient-to-t {
+  background: none;
+}
+
+/* Actualizar colores de iconos */
+.feature-icon {
+  @apply text-white;
+}
+
+/* Actualizar hover states */
+.feature-card-new:hover,
+.use-case-card:hover {
+  box-shadow: none;
+  @apply border-white/20;
+}
+
+/* Añade estos estilos para el logo y el gradiente */
+.hover-gradient {
+  transition: background 0.3s ease;
+}
+
+.hover-gradient:hover {
+  background: linear-gradient(45deg, #c0392b, #8e44ad);
+}
+
+/* Actualiza los tamaños de texto */
+section p.text-2xl {
+  font-size: 1.5rem;
+  line-height: 1.75;
+}
+
+/* Actualiza el tamaño del logo */
+.w-20 {
+  width: 5rem;
+}
+
+.h-20 {
+  height: 5rem;
+}
+
+/* Actualiza los tamaños del logo y texto */
+.w-32 {
+  width: 10rem;
+}
+
+.h-32 {
+  height: 10rem;
+}
+
+.text-6xl {
+  font-size: 3.75rem;
+  line-height: 1;
+}
+
+/* Mantén el efecto de gradiente */
+.hover-gradient {
+  transition: background 0.3s ease;
+}
+
+.hover-gradient:hover {
+  background: linear-gradient(45deg, #c0392b, #8e44ad);
+}
+
+/* Ajusta el espaciado */
+.gap-6 {
+  gap: 1.5rem;
+}
+
+/* Ajusta el texto descriptivo */
+section p.text-2xl {
+  font-size: 1.5rem;
+  line-height: 1.75;
+}
+
+/* Actualiza el tamaño del texto "Alphi" */
+.text-7xl {
+  font-size: 6.5rem; /* Ajusta el tamaño según sea necesario */
+  line-height: 1;
+}
+
+/* Animación para la pelota rebotando */
+@keyframes bounceIn {
+  0% {
+    transform: translateX(-200px);
+    opacity: 0;
+  }
+  60% {
+    transform: translateX(25px);
+    opacity: 1;
+  }
+  80% { 
+    transform: translateX(-10px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-bounce-in {
+  animation: bounceIn 1s cubic-bezier(0.36, 0, 0.66, 1) forwards;
+}
+
+/* Animación para el texto 'Alphi' */
+@keyframes textReveal {
+  0% {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-text-reveal {
+  opacity: 0;
+  animation: textReveal 0.8s ease-out forwards;
+  animation-delay: 0.8s; /* Comienza después de que la pelota se asiente */
+}
+
+/* Animación para el texto descriptivo y el botón */
+@keyframes fadeInDelayed {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-delayed {
+  opacity: 0;
+  animation: fadeInDelayed 0.8s ease-out forwards;
+  animation-delay: 1.6s; /* Comienza después de que aparezca el texto 'Alphi' */
+}
+
+.animate-fade-in-delayed-more {
+  opacity: 0;
+  animation: fadeInDelayed 0.8s ease-out forwards;
+  animation-delay: 2s; /* Comienza después del texto descriptivo */
+}
+
+/* Animación para la bolita cayendo y rebotando */
+@keyframes dropBounce {
+  0% {
+    transform: translateY(-200px);
+    opacity: 0;
+  }
+  30% {
+    transform: translateY(20px);
+    opacity: 1;
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+  70% {
+    transform: translateY(0);
+  }
+  80% {
+    transform: translateY(-2px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-drop-bounce {
+  animation: dropBounce 1.2s cubic-bezier(0.36, 0, 0.66, 1) forwards;
+}
+
+/* Actualizar los delays de las otras animaciones */
+.animate-text-reveal {
+  opacity: 0;
+  animation: textReveal 0.8s ease-out forwards;
+  animation-delay: 1.3s; /* Comienza después de que la bolita termine de rebotar */
+}
+
+.animate-fade-in-delayed {
+  opacity: 0;
+  animation: fadeInDelayed 0.8s ease-out forwards;
+  animation-delay: 2s; /* Comienza después del texto 'Alphi' */
+}
+
+.animate-fade-in-delayed-more {
+  opacity: 0;
+  animation: fadeInDelayed 0.8s ease-out forwards;
+  animation-delay: 2.4s; /* Comienza después del texto descriptivo */
+}
+
+/* Efecto de gradiente en hover para los containers */
+.feature-card-new,
+.use-case-card {
+  position: relative;
+  background: black;
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sólido sutil */
+  transition: all 0.3s ease;
+  border-radius: 0.75rem;
+}
+
+
+
+.feature-card-new:hover::before,
+.use-case-card:hover::before {
+  opacity: 0.3;
+}
+
+/* Mantener el fondo negro del container */
+.feature-card-new::after,
+.use-case-card::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  background: black;
+  border-radius: inherit;
+  z-index: -1;
+}
+
+/* Actualizar el efecto de hover para los íconos */
+.feature-icon {
+  @apply text-white transition-all duration-300;
+}
+
+.feature-card-new:hover .feature-icon {
+  background: linear-gradient(45deg, #ee0979, #ff6a00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transform: scale(1.1);
+}
+
+/* Actualizar el hover de la bolita */
+.hover-gradient:hover {
+  background: linear-gradient(45deg, #ee0979, #ff6a00);
+}
+
+/* Elimino todos los estilos anteriores de los containers y dejo solo lo básico */
+.feature-card-new,
+.use-case-card {
+  position: relative;
+  background: black;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  transition: transform 0.3s ease;
+}
+
+.feature-icon {
+  @apply text-white;
+}
+
+/* Mantengo la animación de la bolita */
+.hover-gradient:hover {
+  background: linear-gradient(45deg, #ee0979, #ff6a00);
+}
+
+/* Pricing cards styles */
+.pricing-card {
+  @apply bg-black p-8 border border-white/10 hover:border-white/20 
+         transition-all duration-300 rounded-lg relative overflow-hidden
+         flex flex-col justify-between;
+}
+
+.pricing-card.premium {
+  @apply border-gradient;
+}
+
+.border-gradient {
+  border: 1px solid transparent;
+  background-image: linear-gradient(black, black), 
+                    linear-gradient(45deg, #ee0979, #ff6a00);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-[#ee0979] to-[#ff6a00] bg-clip-text text-transparent;
+}
+
+.pricing-button-container {
+  @apply mt-auto;
+}
+
+.pricing-button {
+  @apply w-full px-6 py-3 bg-white text-black hover:bg-gray-100 
+         transition-all rounded-full text-sm font-medium;
+}
+
+.pricing-feature {
+  @apply flex items-center gap-3 text-gray-400;
+}
+
+.pricing-badge {
+  @apply absolute top-4 right-4 px-3 py-1 text-xs font-medium rounded-full
+         bg-gradient-to-r from-[#ee0979] to-[#ff6a00] text-white;
+}
+
+.pricing-card {
+  @apply bg-black p-8 border border-white/10 hover:border-white/20 
+         transition-all duration-300 rounded-lg relative overflow-hidden
+         flex flex-col justify-between;
+}
+
+.pricing-title {
+  @apply text-2xl font-light mb-2 gradient-text;
 }

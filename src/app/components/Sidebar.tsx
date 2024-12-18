@@ -33,7 +33,7 @@ export default function Sidebar() {
       <nav className="mt-6 flex-1">
         <Link href="/overview/" className="flex items-center gap-3 px-6 py-2.5 text-white/70 hover:text-white hover:bg-white/5">
           <RiRobot2Line className="text-lg" />
-          <span>Agents</span>
+          <span>Assistants</span>
         </Link>
         
         <Link href="/overview/create" className="flex items-center gap-3 px-6 py-2.5 text-white/70 hover:text-white hover:bg-white/5">

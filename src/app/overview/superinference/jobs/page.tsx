@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '../../../context/AuthContext';
 import { useSearchParams } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../config/firestore';
@@ -25,7 +24,6 @@ interface JobDetails {
 }
 
 export default function JobPage() {
-  const { user } = useAuth();
   const searchParams = useSearchParams();
   const jobId = searchParams.get('jobId');
   const [job, setJob] = useState<JobDetails | null>(null);
@@ -49,19 +47,6 @@ export default function JobPage() {
 
     fetchJobDetails();
   }, [jobId]);
-
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'completed':
-        return 'bg-green-500';
-      case 'in_progress':
-        return 'bg-blue-500';
-      case 'failed':
-        return 'bg-red-500';
-      default:
-        return 'bg-gray-500';
-    }
-  };
 
   return (
     <div className="flex min-h-screen font-geist">

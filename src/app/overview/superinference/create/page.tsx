@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../../../components/Sidebar';
-import { IoClose, IoArrowForward, IoInformationCircle, IoSearch } from 'react-icons/io5';
+import { IoClose, IoArrowForward, IoSearch } from 'react-icons/io5';
 import Header from '../../components/Header';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../config/firestore';
